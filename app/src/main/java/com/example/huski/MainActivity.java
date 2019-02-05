@@ -1,8 +1,10 @@
 package com.example.huski;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -15,7 +17,13 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+    private Fragment fragmentList;
+    private Fragment fragmentAdd;
+    private Fragment fragmentFind;
 
+    private static final int  FRAGMENT_LIST = 0;
+    private static final int  FRAGMENT_ADD = 1;
+    private static final int  FRAGMENT_FIND = 2;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -81,21 +89,54 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            // Handle the camera action
+            this.showListFragment();
         } else if (id == R.id.nav_gallery) {
-
+            this.showAddFragment();
         } else if (id == R.id.nav_slideshow) {
-
+            this.showFindFragment();
         } else if (id == R.id.nav_manage) {
-
-        } else if (id == R.id.nav_share) {
-
-        } else if (id == R.id.nav_send) {
-
+            //startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+    private void showFragment(int fragmentIdentifier){
+        switch (fragmentIdentifier){
+            case FRAGMENT_LIST :
+                this.showListFragment();
+                break;
+            case FRAGMENT_ADD:
+                this.showAddFragment();
+                break;
+            case FRAGMENT_FIND:
+                this.showFindFragment();
+                break;
+            default:
+                break;
+        }
+    }
+    private void showListFragment(){
+        if (this.fragmentList == null) this.fragmentList = ListFragment.newInstance();
+        this.startTransactionFragment(this.fragmentList);
+    }
+
+    private void showAddFragment(){
+        if (this.fragmentAdd == null) this.fragmentAdd = AddFragment.newInstance();
+        this.startTransactionFragment(this.fragmentAdd);
+    }
+
+    private void showFindFragment(){
+        if (this.fragmentFind == null) this.fragmentFind = FindFragment.newInstance();
+        this.startTransactionFragment(this.fragmentFind);
+    }
+
+    private void startTransactionFragment(Fragment fragment){
+        if (!fragment.isVisible()){
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_view, fragment).commit();
+        }
+    }
+
 }
