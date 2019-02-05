@@ -2,7 +2,6 @@
 <LinearLayout
     android:id="@+id/fragment_add_rootview"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
@@ -15,8 +14,7 @@
         android:layout_margin="20dip"
         android:textSize="25sp"
         android:textStyle="bold"
-        android:textColor="#000"
+        android:textColor="#fff"
         android:textAlignment="center"
-        android:text="Add"/>
-
+        android:text="I can add a ski, yiha?"/>
 </LinearLayout>

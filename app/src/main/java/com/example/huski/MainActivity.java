@@ -21,37 +21,20 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.huski.Fragments.AddFragment;
-import com.example.huski.Fragments.ListFragment;
-import com.example.huski.Fragments.LocaliseFragment;
-
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SensorEventListener {
-    // define the display assembly compass picture
-    private ImageView image;
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    // record the compass picture angle turned
-    private float currentDegree = 0f;
 
-    // device sensor manager
-    private SensorManager mSensorManager;
-
-    TextView tvHeading;
-
-    //FOR FRAGMENTS
-    // 1 - Declare fragment handled by Navigation Drawer
-    private Fragment fragmentAdd;
     private Fragment fragmentList;
-    private Fragment fragmentLocalise;
+    private Fragment fragmentAdd;
+    private Fragment fragmentFind;
 
-    //FOR DATAS
-    // 2 - Identify each fragment with a number
-    private static final int FRAGMENT_ADD = 0;
-    private static final int FRAGMENT_LIST = 1;
-    private static final int FRAGMENT_LOCALISE = 2;
+    private static final int  FRAGMENT_LIST = 0;
+    private static final int  FRAGMENT_ADD = 1;
+    private static final int  FRAGMENT_FIND = 2;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,58 +60,10 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //
-        image = (ImageView) findViewById(R.id.imageViewCompass);
-
-        // TextView that will tell the user what degree is he heading
-        tvHeading = (TextView) findViewById(R.id.tvHeading);
-
-        // initialize your android device sensor capabilities
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
 
-        // for the system's orientation sensor registered listeners
-        mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION),
-                SensorManager.SENSOR_DELAY_GAME);
-    }
-
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-
-        // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
-
-        tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
-
-        // create a rotation animation (reverse turn degree degrees)
-        RotateAnimation ra = new RotateAnimation(
-                currentDegree,
-                -degree,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f);
-
-        // how long the animation will take place
-        ra.setDuration(210);
-
-        // set the animation after the end of the reservation status
-        ra.setFillAfter(true);
-
-        // Start the animation
-        image.startAnimation(ra);
-        currentDegree = -degree;
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-        // not in use
-    }
 
 
     @Override
@@ -164,13 +99,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) {
-            this.showFragment(FRAGMENT_ADD);
-            // Handle the camera action
+            this.showListFragment();
         } else if (id == R.id.nav_gallery) {
-            this.showFragment(FRAGMENT_LIST);
-
+            this.showAddFragment();
         } else if (id == R.id.nav_slideshow) {
-            this.showFragment(FRAGMENT_LOCALISE);
+            this.showFindFragment();
+        } else if (id == R.id.nav_manage) {
+            //startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -179,44 +114,39 @@ public class MainActivity extends AppCompatActivity
 
     private void showFragment(int fragmentIdentifier){
         switch (fragmentIdentifier){
-            case FRAGMENT_ADD :
-                this.showNewsFragment();
+            case FRAGMENT_LIST :
+                this.showListFragment();
                 break;
-            case FRAGMENT_LIST:
-                this.showProfileFragment();
+            case FRAGMENT_ADD:
+                this.showAddFragment();
                 break;
-            case FRAGMENT_LOCALISE:
-                this.showParamsFragment();
+            case FRAGMENT_FIND:
+                this.showFindFragment();
                 break;
             default:
                 break;
         }
     }
-
-    // 4 - Create each fragment page and show it
-
-    private void showNewsFragment(){
-        if (this.fragmentAdd == null) this.fragmentAdd = AddFragment.newInstance();
-        this.startTransactionFragment(this.fragmentAdd);
-    }
-
-    private void showParamsFragment(){
+    private void showListFragment(){
         if (this.fragmentList == null) this.fragmentList = ListFragment.newInstance();
         this.startTransactionFragment(this.fragmentList);
     }
 
-    private void showProfileFragment(){
-        if (this.fragmentLocalise == null) this.fragmentLocalise = LocaliseFragment.newInstance();
-        this.startTransactionFragment(this.fragmentLocalise);
+    private void showAddFragment(){
+        if (this.fragmentAdd == null) this.fragmentAdd = AddFragment.newInstance();
+        this.startTransactionFragment(this.fragmentAdd);
     }
 
-    // ---
+    private void showFindFragment(){
+        if (this.fragmentFind == null) this.fragmentFind = FindFragment.newInstance();
+        this.startTransactionFragment(this.fragmentFind);
+    }
 
-    // 3 - Generic method that will replace and show a fragment inside the MainActivity Frame Layout
     private void startTransactionFragment(Fragment fragment){
         if (!fragment.isVisible()){
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.drawer_layout, fragment).commit();
+                    .replace(R.id.fragment_view, fragment).commit();
         }
     }
+
 }
