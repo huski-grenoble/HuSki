@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center"
-    android:background="#EDD9CF">
+    android:background="#fff">
 
     <TextView
         android:id="@+id/fragment_page_list_title"

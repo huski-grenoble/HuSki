@@ -70,32 +70,36 @@ public class FindFragment extends Fragment implements SensorEventListener {
     }
     @Override
     public void onSensorChanged(SensorEvent event) {
+        if(getActivity() != null) {
+            // get the angle around the z-axis rotated
+            //float degree = Math.round(event.values[0]);
+            gpsStruct p1 = new gpsStruct(0, 0);
+            gpsStruct p2 = new gpsStruct(1, 0);
+            float degree = p1.getAngle(p2) + Math.round(event.values[0]);
 
-        // get the angle around the z-axis rotated
-        float degree = Math.round(event.values[0]);
+            tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
+            int lvlToDraw = (int) degree % 7;
+            String lvl = "lvl" + lvlToDraw;
+            imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
 
-        tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
-        int lvlToDraw = (int) degree % 7;
-        String lvl = "lvl" + lvlToDraw;
-        imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
+            // create a rotation animation (reverse turn degree degrees)
+            RotateAnimation ra = new RotateAnimation(
+                    currentDegree,
+                    -degree,
+                    Animation.RELATIVE_TO_SELF, 0.5f,
+                    Animation.RELATIVE_TO_SELF,
+                    0.5f);
 
-        // create a rotation animation (reverse turn degree degrees)
-        RotateAnimation ra = new RotateAnimation(
-                currentDegree,
-                -degree,
-                Animation.RELATIVE_TO_SELF, 0.5f,
-                Animation.RELATIVE_TO_SELF,
-                0.5f);
+            // how long the animation will take place
+            ra.setDuration(210);
 
-        // how long the animation will take place
-        ra.setDuration(210);
+            // set the animation after the end of the reservation status
+            ra.setFillAfter(true);
 
-        // set the animation after the end of the reservation status
-        ra.setFillAfter(true);
-
-        // Start the animation
-        imageArrow.startAnimation(ra);
-        currentDegree = -degree;
+            // Start the animation
+            imageArrow.startAnimation(ra);
+            currentDegree = -degree;
+        }
     }
 
     @Override
