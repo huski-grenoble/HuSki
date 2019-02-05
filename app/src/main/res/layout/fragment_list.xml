@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.SwipeRefreshLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/swiperefresh"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
@@ -15,7 +20,16 @@
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
         android:text="Add a SkiCard"
-        android:onClick="onClickAddBtn"/>
+        android:layout_below="@+id/cardList"
+        android:layout_marginTop="25px"/>
+    <Button
+        android:id="@+id/connectionBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="Connection to gateway"
+        android:textColor="@android:color/black"
+        android:background="@android:color/holo_orange_light"/>
 </RelativeLayout>
+    </android.support.v4.widget.SwipeRefreshLayout>

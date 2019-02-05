@@ -1,10 +1,13 @@
 package com.example.huski;
 
 import android.app.ListActivity;
+import android.bluetooth.BluetoothAdapter;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,13 +28,19 @@ import java.util.List;
 
 
 public class ListFragment extends Fragment {
-    public static ListFragment newInstance() {
-        return (new ListFragment());
-    }
-    Button addBtn;
+
+    Button addBtn,connectionBtn;
+    SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
     ListView cardList;
+    BluetoothAdapter mBluetoothAdapter;
+    private boolean isConnected;
+
+    public static ListFragment newInstance() {
+        return (new ListFragment());
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,6 +55,9 @@ public class ListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_list, container, false);
         cardList = v.findViewById(R.id.cardList);
         addBtn = v.findViewById(R.id.addBtn);
+        connectionBtn = v.findViewById(R.id.connectionBtn);
+        mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
+        isConnected = isBluetoothActivated();
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -53,6 +65,23 @@ public class ListFragment extends Fragment {
                 adapter.add(newCard);
             }
         });
+        connectionBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+            }
+        });
+
+        mySwipeRefreshLayout.setOnRefreshListener(
+                new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        isConnected = isBluetoothActivated();
+                        adapter.notifyDataSetChanged();
+                        onCompletion();
+                    }
+                }
+        );
 
         cardList.setAdapter(adapter);
         return v;
@@ -62,5 +91,28 @@ public class ListFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList("key",arrayOfCards);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    protected boolean isBluetoothActivated(){
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (mBluetoothAdapter == null) {
+            // Device does not support Bluetooth
+            Toast.makeText(getActivity(), "you cannot use the application", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            if (!mBluetoothAdapter.isEnabled()) {
+                // Bluetooth is not enable
+                connectionBtn.setBackgroundColor(0xFFFF000);
+                connectionBtn.setText("Enable bluetooth | connect the gateway");
+                return false;
+            }
+            connectionBtn.setBackgroundColor(0xFF00FF00);
+            connectionBtn.setText("Status : connected");
+            return true;
+        }
+    }
+
+    private void onCompletion(){
+        mySwipeRefreshLayout.setRefreshing(false);
     }
 }
