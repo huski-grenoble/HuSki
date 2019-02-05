@@ -132,7 +132,7 @@ public class MainActivity extends AppCompatActivity
         this.startTransactionFragment(this.fragmentFind);
     }
 
-    private void startTransactionFragment(Fragment fragment){
+    public void startTransactionFragment(Fragment fragment){
         if (!fragment.isVisible()){
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_view, fragment).commit();

@@ -13,6 +13,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -41,12 +42,10 @@ public class ListFragment extends Fragment {
             arrayOfCards = savedInstanceState.getParcelableArrayList("key");
         }
 
-        adapter = new CardAdapter(getActivity(),arrayOfCards);
+        adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
         View v = inflater.inflate(R.layout.fragment_list, container, false);
-
-        addBtn = (Button) v.findViewById(R.id.addBtn);
         cardList = v.findViewById(R.id.cardList);
-        cardList.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+        addBtn = v.findViewById(R.id.addBtn);
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -55,21 +54,8 @@ public class ListFragment extends Fragment {
             }
         });
 
-        cardList.setOnItemClickListener(new AdapterView.OnItemClickListener(){
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                arrayOfCards.remove(position);
-                adapter.notifyDataSetChanged();
-                adapter.notifyDataSetInvalidated();
-            }
-        });
         cardList.setAdapter(adapter);
         return v;
-    }
-
-    public static void moveToLocalise(){
-
-
     }
 
     @Override
