@@ -1,12 +1,12 @@
-package com.example.huski;
+package com.example.huski.dataStructure;
 
 import java.util.UUID;
 
 public class cardStruct {
-    protected String name;
-    UUID uuid;
+    private String name;
+    private UUID uuid;
     public cardStruct(String name){
-        uuid = UUID.randomUUID();
+        this.uuid = UUID.randomUUID();
         this.name = name;
     }
 
