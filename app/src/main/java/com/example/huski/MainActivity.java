@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity
         this.startTransactionFragment(this.fragmentAdd);
     }
 
-    private void showFindFragment(){
+    public void showFindFragment(){
         if (this.fragmentFind == null) this.fragmentFind = FindFragment.newInstance();
         this.startTransactionFragment(this.fragmentFind);
     }

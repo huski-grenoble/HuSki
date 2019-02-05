@@ -17,6 +17,7 @@
         android:scaleType="fitXY"
         android:src="@drawable/trash"
         android:layout_toLeftOf="@id/localiseButton"/>
+
     <ImageButton
         android:id="@+id/localiseButton"
         android:layout_width="50dp"
@@ -24,4 +25,5 @@
         android:scaleType="fitXY"
         android:src="@drawable/localise"
         android:layout_alignParentRight="true"/>
+
 </RelativeLayout>

@@ -21,4 +21,6 @@ public class cardStruct {
     public UUID getUuid() {
         return uuid;
     }
+
+
 }
