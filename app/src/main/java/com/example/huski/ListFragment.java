@@ -33,12 +33,15 @@ public class ListFragment extends Fragment {
     ListView cardList;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
-        arrayOfCards = new ArrayList<cardStruct>();
-        cardStruct newCard = new cardStruct("Ski1");
+        super.onCreate(savedInstanceState);
+        if(savedInstanceState == null || !savedInstanceState.containsKey("key")){
+            arrayOfCards = new ArrayList<cardStruct>();
+        }
+        else{
+            arrayOfCards = savedInstanceState.getParcelableArrayList("key");
+        }
 
         adapter = new CardAdapter(getActivity(),arrayOfCards);
-        adapter.add(newCard);
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
         addBtn = (Button) v.findViewById(R.id.addBtn);
@@ -65,8 +68,13 @@ public class ListFragment extends Fragment {
     }
 
     public static void moveToLocalise(){
-        Fragment fragment = new Fragment();
-        
+
+
     }
 
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        savedInstanceState.putParcelableArrayList("key",arrayOfCards);
+        super.onSaveInstanceState(savedInstanceState);
+    }
 }
