@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:text="Name"
         android:textSize="35dp"
-        android:layout_alignParentLeft="true"/>
+        android:layout_alignParentLeft="true" />
 
     <ImageButton
         android:id="@+id/deleteButton"
