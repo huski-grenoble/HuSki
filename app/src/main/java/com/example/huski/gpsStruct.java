@@ -33,4 +33,6 @@ public class gpsStruct {
         double angle = Math.atan2(dy, dx);
         return (float) angle;
     }
+
+
 }
