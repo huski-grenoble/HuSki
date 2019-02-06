@@ -176,9 +176,8 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             //float degree = Math.round(event.values[0]);
             gpsStruct p1 = new gpsStruct(currentLon, currentLat);
             gpsStruct p2 = new gpsStruct(0, 90); //0 90 north pole
-            float degree = p1.getAngle(p2) + Math.round(lpValues[0]);
-
-            tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
+            float degree = /*p1.getAngle(p2) +*/ Math.round(lpValues[0]);
+            tvHeading.setText("Heading: " + Float.toString(lpValues[0]) + " degrees");
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
@@ -192,7 +191,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                     0.5f);
 
             // how long the animation will take place
-            ra.setDuration(210);
+            ra.setDuration(120);
 
             // set the animation after the end of the reservation status
             ra.setFillAfter(true);
@@ -216,7 +215,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         checkLocationPermission();
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        Toast.makeText(getContext(),"permissions granted", Toast.LENGTH_SHORT).show();
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
         tvLat.setText("Lat: " + myLocation.getLatitude());
