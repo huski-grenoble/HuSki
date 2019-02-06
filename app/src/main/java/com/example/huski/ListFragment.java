@@ -6,11 +6,13 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,6 +35,8 @@ import java.util.List;
 
 public class ListFragment extends Fragment {
 
+    private static final String STATE_LIST = "State Adapter Data";
+    private static Bundle savedState;
     Button addBtn,connectionBtn;
     AlertDialog.Builder popupAddSki;
     SwipeRefreshLayout mySwipeRefreshLayout;
@@ -49,14 +53,19 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if(savedInstanceState == null || !savedInstanceState.containsKey("key")){
+
+        if(savedState == null){
             arrayOfCards = new ArrayList<cardStruct>();
+            adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
+            adapter.notifyDataSetChanged();
+
         }
         else{
-            arrayOfCards = savedInstanceState.getParcelableArrayList("key");
+            arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
+            adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
+            adapter.notifyDataSetChanged();
         }
 
-        adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
         cardList = v.findViewById(R.id.cardList);
@@ -71,11 +80,17 @@ public class ListFragment extends Fragment {
                 final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
                 final cardStruct newCard = new cardStruct("coucou");
                 final EditText nameInput = (EditText) view.findViewById(R.id.initName);
-                popupAddSki = new AlertDialog.Builder(getContext());
+                popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
                 popupAddSki.create();
                 popupAddSki.setTitle("Enter a name");
 
-                popupAddSki.setPositiveButton("Name", new DialogInterface.OnClickListener() {
+                popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                popupAddSki.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         newCard.setName(nameInput.getText().toString());
@@ -83,12 +98,7 @@ public class ListFragment extends Fragment {
                         adapter.add(newCard);
                     }
                 });
-                popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
+
                 popupAddSki.setView(view);
                 popupAddSki.show();
 
@@ -119,8 +129,36 @@ public class ListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
-        savedInstanceState.putParcelableArrayList("key",arrayOfCards);
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    public Bundle saveState()
+    {
+        // save whatever you would have in onSaveInstanceState() and return a bundle with the saved data
+        Bundle savedState = new Bundle();
+        savedState.putParcelableArrayList(STATE_LIST,getList());
+        return savedState;
+
+    }
+
+    public ArrayList<cardStruct> getList() {
+        return new ArrayList<cardStruct>(arrayOfCards);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        savedState = saveState();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
     }
 
     protected boolean isBluetoothActivated(){
