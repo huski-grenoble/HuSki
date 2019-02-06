@@ -20,8 +20,27 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="10dp"
             android:layout_marginBottom="20dp"
             android:text="Heading: 0.0" />
+        <TextView
+            android:id="@+id/tvLon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:text="Lon: 0.0" />
+        <TextView
+            android:id="@+id/tvLat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:layout_marginHorizontal="10dp"
+            android:text="Lat: 0.0" />
     </LinearLayout>
 
     <ImageView
