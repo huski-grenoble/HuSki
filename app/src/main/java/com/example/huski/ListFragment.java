@@ -1,7 +1,9 @@
 package com.example.huski;
 
+import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,8 +18,10 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.huski.dataStructure.CardAdapter;
@@ -30,6 +34,7 @@ import java.util.List;
 public class ListFragment extends Fragment {
 
     Button addBtn,connectionBtn;
+    AlertDialog.Builder popupAddSki;
     SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
@@ -59,13 +64,37 @@ public class ListFragment extends Fragment {
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
         isConnected = isBluetoothActivated();
+
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cardStruct newCard = new cardStruct("coucou");
-                adapter.add(newCard);
+                final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
+                final cardStruct newCard = new cardStruct("coucou");
+                final EditText nameInput = (EditText) view.findViewById(R.id.initName);
+                popupAddSki = new AlertDialog.Builder(getContext());
+                popupAddSki.create();
+                popupAddSki.setTitle("Enter a name");
+
+                popupAddSki.setPositiveButton("Name", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        newCard.setName(nameInput.getText().toString());
+                        ListFragment.adapter.notifyDataSetChanged();
+                        adapter.add(newCard);
+                    }
+                });
+                popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                popupAddSki.setView(view);
+                popupAddSki.show();
+
             }
         });
+
         connectionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

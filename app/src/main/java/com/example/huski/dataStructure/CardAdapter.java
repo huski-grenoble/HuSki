@@ -80,6 +80,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 dialog = new AlertDialog.Builder(getContext());
                 dialog.create();
                 dialog.setTitle("Edit the name");
+
                 dialog.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
