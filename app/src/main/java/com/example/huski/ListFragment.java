@@ -53,6 +53,7 @@ public class ListFragment extends Fragment {
 
         adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
         View v = inflater.inflate(R.layout.fragment_list, container, false);
+
         cardList = v.findViewById(R.id.cardList);
         addBtn = v.findViewById(R.id.addBtn);
         connectionBtn = v.findViewById(R.id.connectionBtn);
