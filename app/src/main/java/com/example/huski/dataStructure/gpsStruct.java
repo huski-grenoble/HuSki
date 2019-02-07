@@ -36,8 +36,8 @@ public class gpsStruct {
     }
 
     public float getAngle(gpsStruct target){
-        double lat2 = target.getLat() / 1E6;
-        double lon2 = target.getLon() / 1E6;
+        double lat2 = target.getLat();
+        double lon2 = target.getLon();
         double dy = this.lat - lat2;
         double dx = Math.cos(Math.PI / 180 * lat2) * (lon2 - this.lon);
         double angle = Math.atan2(dy, dx);

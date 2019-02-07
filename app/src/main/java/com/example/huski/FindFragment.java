@@ -162,10 +162,11 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             // get the angle around the z-axis rotated
             //float degree = Math.round(event.values[0]);
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
-            gpsStruct p2 = new gpsStruct(4.835370, 45.746084, 0); //0 90 north pole
+            gpsStruct p2 = new gpsStruct(5.715378, 45.184611 , 220); //0 90 north pole
             double distance = p1.distance(p2);
-            float degree = /*p1.getAngle(p2) +*/ Math.round(event.values[0]);
-            tvHeading.setText("Heading: " + Double.toString(distance) + " degrees");
+            Toast.makeText(getContext(), Float.toString(p1.getAngle(p2)), Toast.LENGTH_SHORT).show();
+            float degree = p1.getAngle(p2) + Math.round(event.values[0]); //TODO revoir le calcul
+            tvHeading.setText("Heading: " + Double.toString(event.values[0]) + " degrees");
 
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;
