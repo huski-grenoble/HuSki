@@ -2,6 +2,8 @@ package com.example.huski;
 
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
@@ -75,7 +77,14 @@ public class ListFragment extends Fragment {
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
         isConnected = isBluetoothActivated();
-
+        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

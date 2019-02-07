@@ -21,6 +21,17 @@
         android:text="Add a SkiCard"
         android:layout_below="@+id/cardList"
         android:layout_marginTop="25px"/>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:background="@drawable/baseline_add_circle_black_18dp"
+        android:layout_above="@+id/connectionBtn"
+        android:layout_alignParentRight="true"
+        />
     <Button
         android:id="@+id/connectionBtn"
         android:layout_width="match_parent"
