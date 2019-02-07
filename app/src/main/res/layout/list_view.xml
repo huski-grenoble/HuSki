@@ -10,6 +10,16 @@
         android:textSize="35dp"
         android:layout_alignParentLeft="true" />
 
+    <ImageView
+        android:id="@+id/batterySkiLvl"
+        android:layout_width="42dp"
+        android:layout_height="21dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/battery0"
+        android:layout_marginTop="15dp"
+        android:layout_toLeftOf="@id/deleteButton"/>
+    />
+
     <ImageButton
         android:id="@+id/deleteButton"
         android:layout_width="50dp"

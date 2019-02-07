@@ -10,9 +10,13 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +33,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     Activity activity;
     FindFragment findFragment;
     AlertDialog.Builder dialog;
+    ImageView imBatterySki;
     ImageButton localiseBtn,deleteBtn;
     TextView cardName;
 
@@ -47,9 +52,20 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.list_view, parent, false);
         }
         // Link to XML
+        imBatterySki = convertView.findViewById(R.id.batterySkiLvl);
         cardName = convertView.findViewById(R.id.cardName);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
+        // à bouger dans le truc qui recevra les données des Skis
+        if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
+            Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
+            animation.setDuration(500); //1 second duration for each animation cycle
+            animation.setInterpolator(new LinearInterpolator());
+            animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
+            animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
+            imBatterySki.startAnimation(animation); //to start animation
+        }
+
         // set cardName
         cardName.setText(card.getName());
 

@@ -1,7 +1,6 @@
 package com.example.huski;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,10 +27,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.huski.dataStructure.gpsStruct;
+
 import java.util.Arrays;
 
 import static android.content.Context.SENSOR_SERVICE;
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 
 public class FindFragment extends Fragment implements SensorEventListener, LocationListener {
@@ -47,7 +47,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     // Manager for gps localisation
     LocationManager locationManager;
-    double currentLon, currentLat;
+    double currentLon, currentLat, currentAlt;
     TextView tvLon, tvLat;
 
     TextView tvHeading;
@@ -156,29 +156,16 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
     }
 
-    static final float ALPHA = 0.80f;
-    protected float[] lowPass( float[] input, float[] output ) {
-        if ( output == null ) return input;
-
-        for ( int i=0; i<input.length; i++ ) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
-        }
-        return output;
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float[] lpValues = new float[event.values.length];
-        Arrays.fill(lpValues, 0);
         if (getActivity() != null && getView() != null) {
-            lpValues = lowPass(event.values.clone(), lpValues);
             // get the angle around the z-axis rotated
             //float degree = Math.round(event.values[0]);
-            gpsStruct p1 = new gpsStruct(currentLon, currentLat);
-            gpsStruct p2 = new gpsStruct(0, 90); //0 90 north pole
-            float degree = /*p1.getAngle(p2) +*/ Math.round(lpValues[0]);
-            tvHeading.setText("Heading: " + Float.toString(lpValues[0]) + " degrees");
-
+            gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
+            gpsStruct p2 = new gpsStruct(4.835370, 45.746084, 0); //0 90 north pole
+            double distance = p1.distance(p2);
+            float degree = /*p1.getAngle(p2) +*/ Math.round(event.values[0]);
+            tvHeading.setText("Heading: " + Double.toString(distance) + " degrees");
 
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;
@@ -219,6 +206,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
+        currentAlt = myLocation.getAltitude();
         tvLat.setText("Lat: " + myLocation.getLatitude());
         tvLon.setText("Lon: " + myLocation.getLongitude());
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);

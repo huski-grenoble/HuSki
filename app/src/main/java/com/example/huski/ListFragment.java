@@ -14,12 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,6 +39,7 @@ public class ListFragment extends Fragment {
 
     Button addBtn,connectionBtn;
     AlertDialog.Builder popupAddSki;
+    ImageView imBatterySki;
     SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
@@ -59,6 +64,7 @@ public class ListFragment extends Fragment {
         adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
+        imBatterySki = v.findViewById(R.id.batterySkiLvl);
         cardList = v.findViewById(R.id.cardList);
         addBtn = v.findViewById(R.id.addBtn);
         connectionBtn = v.findViewById(R.id.connectionBtn);
