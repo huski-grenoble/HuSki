@@ -20,6 +20,8 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -48,6 +50,7 @@ public class ListFragment extends Fragment {
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
     ListView cardList;
+    Animation anim;
     BluetoothAdapter mBluetoothAdapter;
     private boolean isConnected;
 

@@ -248,4 +248,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     public void onProviderDisabled(String provider) {
 
     }
+
+
+
 }
