@@ -38,9 +38,27 @@ public class gpsStruct {
     public float getAngle(gpsStruct target){
         double lat2 = target.getLat();
         double lon2 = target.getLon();
-        double dy = this.lat - lat2;
-        double dx = Math.cos(Math.PI / 180 * lat2) * (lon2 - this.lon);
-        double angle = Math.atan2(dy, dx);
+        double dy = lat2 -this.lat;
+        double dx = lon2 - this.lon;
+        if(dy == 0 && dx == 0){
+            return 0;
+        }
+        if(dy == 0 && lon2 > this.lon){
+            return 90;
+        }
+        else if(dy == 0 && lon2 <= this.lon){
+            return -90;
+        }
+        if(dx == 0 && lat2 > this.lat){
+            return 0;
+        }
+        else if(dx == 0 && lat2 <= this.lat){
+            return 180;
+        }
+        double y = Math.sin(Math.toRadians(dy)) * Math.cos(Math.toRadians(lon2));
+        double x = Math.cos(Math.toRadians(this.lon)) * Math.sin(Math.toRadians(lon2)) -
+                Math.sin(Math.toRadians(this.lon)) * Math.cos(Math.toRadians(lon2))*Math.cos(Math.toRadians(dy));
+        double angle = (Math.toDegrees(Math.atan2(x, y)) + 360) % 360;
         return (float) angle;
     }
 
