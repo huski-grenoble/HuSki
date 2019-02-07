@@ -1,6 +1,8 @@
 package com.example.huski;
 
-import android.app.AlertDialog;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
@@ -81,9 +83,10 @@ public class ListFragment extends Fragment {
                 final cardStruct newCard = new cardStruct("coucou");
                 final EditText nameInput = (EditText) view.findViewById(R.id.initName);
                 popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+                //popupAddSki = new AlertDialog.Builder(getContext());
                 popupAddSki.create();
                 popupAddSki.setTitle("Enter a name");
-
+                popupAddSki.setCancelable(false);
                 popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

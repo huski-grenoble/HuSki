@@ -17,10 +17,10 @@
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
-    <style name="AlertDialogCustom" parent="@android:style/Theme.Dialog">
-        <item name="android:textColor">#C51A1A</item>
-        <item name="android:typeface">monospace</item>
-        <item name="android:textSize">10sp</item>
+    <style name="AlertDialogCustom" parent="Theme.AppCompat.Light.Dialog.Alert">
+        <item name="android:textColor">@color/colorPrimaryDark</item>
+        <item name="android:typeface">normal</item>
+        <item name="android:textSize">18sp</item>
 
     </style>
 
