@@ -7,9 +7,11 @@ import java.util.UUID;
 
 public class cardStruct implements Parcelable {
     private String name;
+    private UUID uuid;
 
     public cardStruct(String name){
         this.name = name;
+        this.uuid = UUID.randomUUID();
     }
 
     private cardStruct(Parcel in) {
@@ -22,6 +24,10 @@ public class cardStruct implements Parcelable {
 
     public String getName() {
         return name;
+    }
+
+    public UUID getUuid() {
+        return uuid;
     }
 
     public void setName(String name) {

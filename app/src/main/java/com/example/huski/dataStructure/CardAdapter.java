@@ -30,7 +30,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     FindFragment findFragment;
     AlertDialog.Builder dialog;
     ImageButton localiseBtn,deleteBtn;
-    TextView cardName;
+    TextView cardName,uuid;
 
     public CardAdapter(Activity activity, ArrayList<cardStruct> cards,FindFragment findFragment){
         super(activity,0,cards);
@@ -48,10 +48,12 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         }
         // Link to XML
         cardName = convertView.findViewById(R.id.cardName);
+        uuid = convertView.findViewById(R.id.uuid);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
         // set cardName
         cardName.setText(card.getName());
+        uuid.setText(card.getUuid().toString());
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override

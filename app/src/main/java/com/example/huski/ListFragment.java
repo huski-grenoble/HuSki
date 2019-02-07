@@ -41,7 +41,8 @@ public class ListFragment extends Fragment {
 
     private static final String STATE_LIST = "State Adapter Data";
     private static Bundle savedState;
-    Button addBtn,connectionBtn;
+    Button connectionBtn;
+    FloatingActionButton addBtn;
     AlertDialog.Builder popupAddSki;
     SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
@@ -72,19 +73,14 @@ public class ListFragment extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
-        cardList = v.findViewById(R.id.cardList);
-        addBtn = v.findViewById(R.id.addBtn);
+        cardList = v.findViewById(R.id.list);
+        TextView emptyText = v.findViewById(android.R.id.empty);
+        cardList.setEmptyView(emptyText);
+        addBtn = (FloatingActionButton) v.findViewById(R.id.addBtn);
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
         isConnected = isBluetoothActivated();
-        FloatingActionButton fab = (FloatingActionButton) v.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -120,7 +116,10 @@ public class ListFragment extends Fragment {
         connectionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                if(!isConnected){
+                    startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                }
+
             }
         });
 
@@ -186,7 +185,7 @@ public class ListFragment extends Fragment {
                 connectionBtn.setText("Enable bluetooth | connect the gateway");
                 return false;
             }
-            connectionBtn.setBackgroundColor(0xFF00FF00);
+            connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
             connectionBtn.setText("Status : connected");
             return true;
         }

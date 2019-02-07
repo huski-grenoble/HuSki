@@ -13,24 +13,22 @@
     <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/cardList"/>
-    <Button
-        android:id="@+id/addBtn"
+        android:id="@+id/list"/>
+    <TextView
+        android:id="@android:id/empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add a SkiCard"
-        android:layout_below="@+id/cardList"
-        android:layout_marginTop="25px"/>
+        android:text="Add a card cliking the button below" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab"
+        android:id="@+id/addBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:background="@drawable/baseline_add_circle_black_18dp"
         android:layout_above="@+id/connectionBtn"
         android:layout_alignParentRight="true"
+        android:src="@drawable/baseline_add_circle_black_18dp"
         />
     <Button
         android:id="@+id/connectionBtn"
@@ -38,7 +36,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:text="Connection to gateway"
-        android:textColor="@android:color/black"
+        android:textColor="@android:color/white"
         android:background="@android:color/holo_orange_light"/>
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>
