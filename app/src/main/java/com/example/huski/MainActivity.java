@@ -27,7 +27,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     private Fragment fragmentList;
     private Fragment fragmentAdd;
     private Fragment fragmentFind;
@@ -43,15 +42,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -65,7 +55,7 @@ public class MainActivity extends AppCompatActivity
 
 
 
-    @Override
+   /* @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
@@ -73,6 +63,20 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
+    } */
+
+    @Override
+    public void onBackPressed() {
+
+        int count = getFragmentManager().getBackStackEntryCount();
+
+        if (count == 0) {
+            super.onBackPressed();
+            //additional code
+        } else {
+            getSupportFragmentManager().getBackStackEntryCount();
+        }
+
     }
 
     @Override
@@ -101,9 +105,7 @@ public class MainActivity extends AppCompatActivity
             this.showListFragment();
         } else if (id == R.id.nav_gallery) {
             this.showAddFragment();
-        } else if (id == R.id.nav_slideshow) {
-            this.showFindFragment();
-        } else if (id == R.id.nav_manage) {
+        }else if (id == R.id.nav_manage) {
             startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -118,9 +120,6 @@ public class MainActivity extends AppCompatActivity
                 break;
             case FRAGMENT_ADD:
                 this.showAddFragment();
-                break;
-            case FRAGMENT_FIND:
-                this.showFindFragment();
                 break;
             default:
                 break;

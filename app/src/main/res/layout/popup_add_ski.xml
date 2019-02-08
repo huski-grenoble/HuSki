@@ -3,7 +3,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@drawable/editable_round_text">
+
 
 
     <EditText
@@ -14,6 +16,8 @@
         android:hint="name"
         android:inputType="textMultiLine"
         android:lines="1"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:layout_marginTop="15dp"
+        />
 
 </LinearLayout>
