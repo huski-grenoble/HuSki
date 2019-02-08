@@ -3,9 +3,14 @@ package com.example.huski;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
+import android.bluetooth.BluetoothDevice;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,9 +34,12 @@ import com.example.huski.dataStructure.cardStruct;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 
 public class ListFragment extends Fragment {
+
+    private static final String TAG = "MyActivity";
 
     Button addBtn,connectionBtn;
     AlertDialog.Builder popupAddSki;
@@ -40,7 +48,6 @@ public class ListFragment extends Fragment {
     public static CardAdapter adapter;
     ListView cardList;
     BluetoothAdapter mBluetoothAdapter;
-    private boolean isConnected;
 
     public static ListFragment newInstance() {
         return (new ListFragment());
@@ -63,7 +70,6 @@ public class ListFragment extends Fragment {
         addBtn = v.findViewById(R.id.addBtn);
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
-        isConnected = isBluetoothActivated();
 
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,7 +112,6 @@ public class ListFragment extends Fragment {
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
                     public void onRefresh() {
-                        isConnected = isBluetoothActivated();
                         adapter.notifyDataSetChanged();
                         onCompletion();
                     }
@@ -118,29 +123,71 @@ public class ListFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        IntentFilter filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
+        getActivity().registerReceiver(mBroadcastReceiver1, filter1);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         savedInstanceState.putParcelableArrayList("key",arrayOfCards);
         super.onSaveInstanceState(savedInstanceState);
     }
 
-    protected boolean isBluetoothActivated(){
+    protected void bluetoothOn(){
+        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary) );
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Toast.makeText(getActivity(), "you cannot use the application", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                // Bluetooth is not enable
-                connectionBtn.setBackgroundColor(0xFFFF000);
-                connectionBtn.setText("Enable bluetooth | connect the gateway");
-                return false;
+        Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
+        String deviceName = "";
+        if (pairedDevices.size() > 0) {
+            boolean isPaired = false;
+            for (BluetoothDevice d: pairedDevices) {
+                if(d.getBondState() == 12){
+                    isPaired = true;
+                    deviceName = d.getName();
+                }
             }
-            connectionBtn.setBackgroundColor(0xFF00FF00);
-            connectionBtn.setText("Status : connected");
-            return true;
+            if(isPaired == true){
+                connectionBtn.setText("Status : connected"+deviceName);
+            }
+            else{
+                connectionBtn.setText("None device");
+            }
         }
     }
+
+    private void bluetoothOff(){
+        connectionBtn.setBackgroundColor(0xFFFF000);
+        connectionBtn.setText("Enable bluetooth | connect the gateway");
+    }
+
+    private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            final String action = intent.getAction();
+            if (action.equals(BluetoothAdapter.ACTION_STATE_CHANGED)) {
+                final int state = intent.getIntExtra(BluetoothAdapter.EXTRA_STATE, BluetoothAdapter.ERROR);
+                switch(state) {
+                    case BluetoothAdapter.STATE_OFF:
+                        bluetoothOff();
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_OFF:
+                        break;
+                    case BluetoothAdapter.STATE_ON:
+                        bluetoothOn();
+                        break;
+                    case BluetoothAdapter.STATE_TURNING_ON:
+                        break;
+                }
+
+            }
+        }
+    };
+
+
+
 
     private void onCompletion(){
         mySwipeRefreshLayout.setRefreshing(false);
