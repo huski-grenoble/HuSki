@@ -25,9 +25,6 @@
         android:id="@+id/connectionBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:text="Connection to gateway"
-        android:textColor="@android:color/black"
-        android:background="@android:color/holo_orange_light"/>
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout>

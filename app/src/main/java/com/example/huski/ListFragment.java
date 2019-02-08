@@ -9,7 +9,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -104,7 +106,7 @@ public class ListFragment extends Fragment {
         connectionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+                startActivityForResult(new Intent(Settings.ACTION_BLUETOOTH_SETTINGS), 0);
             }
         });
 
@@ -119,6 +121,13 @@ public class ListFragment extends Fragment {
         );
 
         cardList.setAdapter(adapter);
+        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter.isEnabled()){
+            bluetoothOn();
+        }
+        else{
+            bluetoothOff();
+        }
         return v;
     }
 
@@ -137,7 +146,7 @@ public class ListFragment extends Fragment {
 
     protected void bluetoothOn(){
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary) );
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        connectionBtn.setTextColor(Color.WHITE);
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         String deviceName = "";
         if (pairedDevices.size() > 0) {
@@ -158,7 +167,8 @@ public class ListFragment extends Fragment {
     }
 
     private void bluetoothOff(){
-        connectionBtn.setBackgroundColor(0xFFFF000);
+        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        connectionBtn.setTextColor(Color.WHITE);
         connectionBtn.setText("Enable bluetooth | connect the gateway");
     }
 
