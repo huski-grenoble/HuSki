@@ -31,16 +31,14 @@ import java.util.List;
 public class CardAdapter extends ArrayAdapter<cardStruct> {
     //Variable definition
     Activity activity;
-    FindFragment findFragment;
     AlertDialog.Builder dialog;
     ImageView imBatterySki;
     ImageButton localiseBtn,deleteBtn;
     TextView cardName,uuid;
 
-    public CardAdapter(Activity activity, ArrayList<cardStruct> cards,FindFragment findFragment){
+    public CardAdapter(Activity activity, ArrayList<cardStruct> cards){
         super(activity,0,cards);
         this.activity = activity;
-        this.findFragment = findFragment;
     }
 
     @Override
@@ -84,7 +82,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
             @Override
             public void onClick(View v) {
-                ((MainActivity) getContext()).startTransactionFragment(new FindFragment());
+                ((MainActivity) getContext()).startTransactionFragment(new FindFragment(card));
             }
         });
 

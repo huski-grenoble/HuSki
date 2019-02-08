@@ -1,6 +1,7 @@
 package com.example.huski;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -14,6 +15,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,9 +29,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
 
 import java.util.Arrays;
+import java.util.UUID;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -49,15 +53,23 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     // Manager for gps localisation
     LocationManager locationManager;
     double currentLon, currentLat, currentAlt;
-    TextView tvDist;
+    TextView tvDist, tvCardName, tvCardUuid;
 
-    TextView tvHeading;
+    private cardStruct currentCard;
+
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
     public static FindFragment newInstance() {
-        return (new FindFragment());
+        return (new FindFragment(new cardStruct("test")));
     }
+
+    @SuppressLint("ValidFragment")
+    public FindFragment(cardStruct currentCard){
+        this.currentCard = currentCard;
+    }
+
+    public FindFragment(){}
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
@@ -143,8 +155,12 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         imageArrow = (ImageView) view.findViewById(R.id.imageViewCompass);
         imageIntensity = (ImageView) view.findViewById(R.id.SignalIntensity);
         // TextView that will tell the user what degree is he heading
-        tvHeading = (TextView) view.findViewById(R.id.tvHeading);
+        tvCardName = (TextView) view.findViewById(R.id.tvCardName);
+        tvCardUuid = (TextView) view.findViewById(R.id.tvCardUuid);
         tvDist = (TextView) view.findViewById(R.id.tvDist);
+        //Set text for which card is tracked
+        tvCardName.setText(currentCard.getName());
+        tvCardUuid.setText(currentCard.getUuid().toString());
     }
 
     @Override
@@ -160,10 +176,10 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             // get the angle around the z-axis rotated
             //float degree = Math.round(event.values[0]);
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
-            gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat, currentAlt); //0 90 north pole
+            //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
+            gpsStruct p2 = currentCard.getGps();
             double distance = p1.distance(p2);
             float degree = (p1.getAngle(p2) + Math.round(event.values[0]) + 180) % 360;
-            tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
             tvDist.setText("Approximate distance: " + (int) distance + "m");
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;

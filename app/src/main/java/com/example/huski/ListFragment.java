@@ -1,33 +1,21 @@
 package com.example.huski;
 
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
-import android.app.ListActivity;
 import android.bluetooth.BluetoothAdapter;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.util.Log;
+import android.support.v7.app.AlertDialog;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -37,7 +25,6 @@ import com.example.huski.dataStructure.CardAdapter;
 import com.example.huski.dataStructure.cardStruct;
 
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class ListFragment extends Fragment {
@@ -66,13 +53,13 @@ public class ListFragment extends Fragment {
 
         if(savedState == null){
             arrayOfCards = new ArrayList<cardStruct>();
-            adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
+            adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
 
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
-            adapter = new CardAdapter(getActivity(),arrayOfCards,new FindFragment());
+            adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
         }
 
@@ -176,6 +163,8 @@ public class ListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        final cardStruct newCard = new cardStruct("coucou");
+        adapter.add(newCard);
     }
 
     protected boolean isBluetoothActivated(){

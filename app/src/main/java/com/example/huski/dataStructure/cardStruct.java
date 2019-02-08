@@ -8,10 +8,12 @@ import java.util.UUID;
 public class cardStruct implements Parcelable {
     private String name;
     private UUID uuid;
+    private gpsStruct gps;
 
     public cardStruct(String name){
         this.name = name;
         this.uuid = UUID.randomUUID();
+        this.gps = new gpsStruct(5.7672567 + 10,45.2009812 + 10,540);
     }
 
     private cardStruct(Parcel in) {
@@ -22,6 +24,14 @@ public class cardStruct implements Parcelable {
         return 0;
     }
 
+
+    public gpsStruct getGps() {
+        return gps;
+    }
+
+    public void setGps(gpsStruct gps) {
+        this.gps = gps;
+    }
     public String getName() {
         return name;
     }

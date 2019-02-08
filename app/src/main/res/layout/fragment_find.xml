@@ -9,26 +9,42 @@
     android:gravity="center"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="317dp"
-        android:layout_height="79dp"
-        android:orientation="horizontal">
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="312dp"
+        android:layout_height="71dp">
 
         <TextView
-            android:id="@+id/tvHeading"
+            android:id="@+id/tvCardName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="10dp"
-            android:text="Heading: 0.0" />
-    </LinearLayout>
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="5dp"
+            android:text="Name"
+            android:textColor="#00123e"
+            android:textSize="25dp" />
+
+        <TextView
+            android:id="@+id/tvCardUuid"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvCardName"
+            android:layout_alignParentLeft="true"
+            android:layout_marginStart="5dp"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="-10dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:text="uuid"
+            android:textColor="#000000"
+            android:textSize="11dp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 
     <ImageView
         android:id="@+id/imageViewCompass"
-        android:layout_width="300dp"
-        android:layout_height="367dp"
+        android:layout_width="258dp"
+        android:layout_height="337dp"
         android:layout_below="@+id/tvHeading"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="20dp"
@@ -40,10 +56,10 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginHorizontal="10dp"
-        android:textSize="25dp"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="20dp"
-        android:text="Approximate distance: 0m" />
+        android:text="Approximate distance: 0m"
+        android:textSize="20dp" />
 
     <ImageView
         android:id="@+id/SignalIntensity"
