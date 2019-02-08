@@ -31,6 +31,7 @@ import com.example.huski.dataStructure.gpsStruct;
 
 import java.util.Arrays;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 
@@ -48,7 +49,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     // Manager for gps localisation
     LocationManager locationManager;
     double currentLon, currentLat, currentAlt;
-    TextView tvLon, tvLat;
+    TextView tvDist;
 
     TextView tvHeading;
     private FragmentActivity mFrgAct;
@@ -141,12 +142,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         //
         imageArrow = (ImageView) view.findViewById(R.id.imageViewCompass);
         imageIntensity = (ImageView) view.findViewById(R.id.SignalIntensity);
-        tvLat = (TextView) view.findViewById(R.id.tvLat);
-        tvLon = (TextView) view.findViewById(R.id.tvLon);
-
         // TextView that will tell the user what degree is he heading
         tvHeading = (TextView) view.findViewById(R.id.tvHeading);
-
+        tvDist = (TextView) view.findViewById(R.id.tvDist);
     }
 
     @Override
@@ -164,10 +162,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
             gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat, currentAlt); //0 90 north pole
             double distance = p1.distance(p2);
-            Toast.makeText(getContext(), Float.toString(p1.getAngle(p2)), Toast.LENGTH_SHORT).show();
-            float degree = (p1.getAngle(p2) + Math.round(event.values[0]) + 180) % 360; //TODO revoir le calcul
+            float degree = (p1.getAngle(p2) + Math.round(event.values[0]) + 180) % 360;
             tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
-
+            tvDist.setText("Approximate distance: " + (int) distance + "m");
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
@@ -202,15 +199,19 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         super.onActivityCreated(savedInstanceState);
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) this.getActivity().getSystemService(SENSOR_SERVICE);
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
         checkLocationPermission();
-        Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        while(myLocation == null){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
+            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
         currentAlt = myLocation.getAltitude();
-        tvLat.setText("Lat: " + myLocation.getLatitude());
-        tvLon.setText("Lon: " + myLocation.getLongitude());
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) this);
+
         mFrgAct = getActivity();
         mIntent = mFrgAct.getIntent();
     }
@@ -219,8 +220,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     public void onLocationChanged(Location location) {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
-        tvLat.setText("Latitude:" + location.getLatitude());
-        tvLon.setText("Longitude: " + location.getLongitude());
     }
 
     @Override

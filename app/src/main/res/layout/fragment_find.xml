@@ -5,13 +5,13 @@
     android:id="@+id/fragment_find_rootview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#EDD9CF"
+    android:background="#fff"
     android:gravity="center"
     android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="317dp"
-        android:layout_height="137dp"
+        android:layout_height="79dp"
         android:orientation="horizontal">
 
         <TextView
@@ -23,35 +23,26 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="10dp"
             android:text="Heading: 0.0" />
-
-        <TextView
-            android:id="@+id/tvLon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:text="Lon: 0.0" />
-
-        <TextView
-            android:id="@+id/tvLat"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginHorizontal="10dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:text="Lat: 0.0" />
     </LinearLayout>
 
     <ImageView
         android:id="@+id/imageViewCompass"
-        android:layout_width="wrap_content"
-        android:layout_height="358dp"
+        android:layout_width="300dp"
+        android:layout_height="367dp"
         android:layout_below="@+id/tvHeading"
         android:layout_centerHorizontal="true"
-        android:src="@drawable/arrow" />
+        android:layout_marginTop="20dp"
+        android:src="@drawable/arrowski" />
+
+    <TextView
+        android:id="@+id/tvDist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginHorizontal="10dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="20dp"
+        android:text="Approximate distance: 0m" />
 
     <ImageView
         android:id="@+id/SignalIntensity"
