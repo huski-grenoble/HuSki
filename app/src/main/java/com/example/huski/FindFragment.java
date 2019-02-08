@@ -53,8 +53,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     // Manager for gps localisation
     LocationManager locationManager;
     double currentLon, currentLat, currentAlt;
+    int currentDistance;
     TextView tvDist, tvCardName, tvCardUuid;
-
+    private boolean displayGif = true;
     private cardStruct currentCard;
 
     private FragmentActivity mFrgAct;
@@ -178,30 +179,49 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
             //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
             gpsStruct p2 = currentCard.getGps();
-            double distance = p1.distance(p2);
-            float degree = (p1.getAngle(p2) + Math.round(event.values[0]) + 180) % 360;
-            tvDist.setText("Approximate distance: " + (int) distance + "m");
-            int lvlToDraw = (int) degree % 7;
+            currentDistance = (int) p1.distance(p2);
+            float degree = 360 + (p1.getAngle(p2) + Math.round(event.values[0])) % 360;
+            int lvlToDraw = (int) degree % 8;
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
+            if(displayGif == true) {
+                tvDist.setText("Approximate distance: " + currentDistance + "m");
+                // create a rotation animation (reverse turn degree degrees)
+                RotateAnimation ra = new RotateAnimation(
+                        currentDegree,
+                        -degree,
+                        Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f);
 
-            // create a rotation animation (reverse turn degree degrees)
-            RotateAnimation ra = new RotateAnimation(
-                    currentDegree,
-                    -degree,
-                    Animation.RELATIVE_TO_SELF, 0.5f,
-                    Animation.RELATIVE_TO_SELF,
-                    0.5f);
+                // how long the animation will take place
+                ra.setDuration(120);
 
-            // how long the animation will take place
-            ra.setDuration(120);
+                // set the animation after the end of the reservation status
+                ra.setFillAfter(true);
 
-            // set the animation after the end of the reservation status
-            ra.setFillAfter(true);
+                // Start the animation
+                imageArrow.startAnimation(ra);
+                currentDegree = -degree;
+            }
+            else{
+                currentDegree = 0;
+                RotateAnimation ra = new RotateAnimation(
+                        currentDegree,
+                        0,
+                        Animation.RELATIVE_TO_SELF, 0.5f,
+                        Animation.RELATIVE_TO_SELF,
+                        0.5f);
 
-            // Start the animation
-            imageArrow.startAnimation(ra);
-            currentDegree = -degree;
+                // how long the animation will take place
+                ra.setDuration(120);
+
+                // set the animation after the end of the reservation status
+                ra.setFillAfter(true);
+
+                // Start the animation
+                imageArrow.startAnimation(ra);
+            }
         }
     }
 
@@ -236,6 +256,19 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     public void onLocationChanged(Location location) {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
+        gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
+        //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
+        gpsStruct p2 = currentCard.getGps();
+        currentDistance = (int) p1.distance(p2);
+        if(currentDistance <= 2000 & displayGif){
+            imageArrow.setImageResource(R.drawable.huskysearching);
+            tvDist.setText("The ski is very close to you! Please refer to the following indicator to find it.");
+            displayGif = false;
+        }
+        else if(currentDistance > 2000){
+            imageArrow.setImageResource(R.drawable.arrowski);
+            displayGif = true;
+        }
     }
 
     @Override

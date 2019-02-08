@@ -59,7 +59,7 @@ public class gpsStruct {
         double x = Math.cos(Math.toRadians(this.lon)) * Math.sin(Math.toRadians(lon2)) -
                 Math.sin(Math.toRadians(this.lon)) * Math.cos(Math.toRadians(lon2))*Math.cos(Math.toRadians(dy));
         double angle = (Math.toDegrees(Math.atan2(x, y)) + 360) % 360;
-        return (float) angle;
+        return (float) -angle;
     }
 
     public double distance(gpsStruct p2) {

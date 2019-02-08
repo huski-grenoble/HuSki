@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -27,12 +26,9 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.huski.dataStructure.CardAdapter;
 import com.example.huski.dataStructure.cardStruct;
-
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 
@@ -156,7 +152,7 @@ public class ListFragment extends Fragment {
     }
 
     protected void bluetoothOn() {
-        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
         connectionBtn.setTextColor(Color.WHITE);
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         String deviceName = "";
@@ -169,9 +165,9 @@ public class ListFragment extends Fragment {
                 }
             }
             if (isPaired == true) {
-                connectionBtn.setText("Status : connected" + deviceName);
+                connectionBtn.setText("Status : connected to " + deviceName);
             } else {
-                connectionBtn.setText("None device");
+                connectionBtn.setText("No device found");
             }
         }
     }
@@ -217,7 +213,7 @@ public class ListFragment extends Fragment {
             if (!mBluetoothAdapter.isEnabled()) {
                 // Bluetooth is not enable
                 connectionBtn.setBackgroundColor(0xFFFF000);
-                connectionBtn.setText("Enable bluetooth | connect the gateway");
+                connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
                 return false;
             }
             connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
@@ -227,9 +223,9 @@ public class ListFragment extends Fragment {
     }
 
     private void bluetoothOff(){
-        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
-        connectionBtn.setText("Enable bluetooth | connect the gateway");
+        connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
     }
 
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
