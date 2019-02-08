@@ -27,7 +27,6 @@ import java.util.List;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-
     private Fragment fragmentList;
     private Fragment fragmentAdd;
     private Fragment fragmentFind;
