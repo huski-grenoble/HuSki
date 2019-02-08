@@ -1,7 +1,6 @@
 package com.example.huski;
 
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -28,10 +27,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.huski.dataStructure.gpsStruct;
+
 import java.util.Arrays;
 
+import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
-import static android.support.v4.content.ContextCompat.checkSelfPermission;
 
 
 public class FindFragment extends Fragment implements SensorEventListener, LocationListener {
@@ -47,8 +48,8 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     // Manager for gps localisation
     LocationManager locationManager;
-    double currentLon, currentLat;
-    TextView tvLon, tvLat;
+    double currentLon, currentLat, currentAlt;
+    TextView tvDist;
 
     TextView tvHeading;
     private FragmentActivity mFrgAct;
@@ -141,12 +142,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         //
         imageArrow = (ImageView) view.findViewById(R.id.imageViewCompass);
         imageIntensity = (ImageView) view.findViewById(R.id.SignalIntensity);
-        tvLat = (TextView) view.findViewById(R.id.tvLat);
-        tvLon = (TextView) view.findViewById(R.id.tvLon);
-
         // TextView that will tell the user what degree is he heading
         tvHeading = (TextView) view.findViewById(R.id.tvHeading);
-
+        tvDist = (TextView) view.findViewById(R.id.tvDist);
     }
 
     @Override
@@ -156,29 +154,17 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
     }
 
-    static final float ALPHA = 0.80f;
-    protected float[] lowPass( float[] input, float[] output ) {
-        if ( output == null ) return input;
-
-        for ( int i=0; i<input.length; i++ ) {
-            output[i] = output[i] + ALPHA * (input[i] - output[i]);
-        }
-        return output;
-    }
-
     @Override
     public void onSensorChanged(SensorEvent event) {
-        float[] lpValues = new float[event.values.length];
-        Arrays.fill(lpValues, 0);
         if (getActivity() != null && getView() != null) {
-            lpValues = lowPass(event.values.clone(), lpValues);
             // get the angle around the z-axis rotated
             //float degree = Math.round(event.values[0]);
-            gpsStruct p1 = new gpsStruct(currentLon, currentLat);
-            gpsStruct p2 = new gpsStruct(0, 90); //0 90 north pole
-            float degree = Math.round(lpValues[0]);
-
+            gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
+            gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat, currentAlt); //0 90 north pole
+            double distance = p1.distance(p2);
+            float degree = (p1.getAngle(p2) + Math.round(event.values[0]) + 180) % 360;
             tvHeading.setText("Heading: " + Float.toString(degree) + " degrees");
+            tvDist.setText("Approximate distance: " + (int) distance + "m");
             int lvlToDraw = (int) degree % 7;
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
@@ -192,7 +178,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                     0.5f);
 
             // how long the animation will take place
-            ra.setDuration(210);
+            ra.setDuration(120);
 
             // set the animation after the end of the reservation status
             ra.setFillAfter(true);
@@ -213,15 +199,19 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         super.onActivityCreated(savedInstanceState);
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) this.getActivity().getSystemService(SENSOR_SERVICE);
-        locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
         checkLocationPermission();
-        Location myLocation = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        Toast.makeText(getContext(),"permissions granted", Toast.LENGTH_SHORT).show();
+        Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        while(myLocation == null){
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
+            myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        }
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
-        tvLat.setText("Lat: " + myLocation.getLatitude());
-        tvLon.setText("Lon: " + myLocation.getLongitude());
+        currentAlt = myLocation.getAltitude();
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, (LocationListener) this);
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, (LocationListener) this);
+
         mFrgAct = getActivity();
         mIntent = mFrgAct.getIntent();
     }
@@ -230,8 +220,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     public void onLocationChanged(Location location) {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
-        tvLat.setText("Latitude:" + location.getLatitude());
-        tvLon.setText("Longitude: " + location.getLongitude());
     }
 
     @Override

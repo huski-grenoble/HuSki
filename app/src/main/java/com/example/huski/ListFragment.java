@@ -28,6 +28,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +47,7 @@ public class ListFragment extends Fragment {
     Button connectionBtn;
     FloatingActionButton addBtn;
     AlertDialog.Builder popupAddSki;
+    ImageView imBatterySki;
     SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
@@ -80,6 +82,7 @@ public class ListFragment extends Fragment {
         TextView emptyText = v.findViewById(android.R.id.empty);
         cardList.setEmptyView(emptyText);
         addBtn = (FloatingActionButton) v.findViewById(R.id.addBtn);
+        imBatterySki = v.findViewById(R.id.batterySkiLvl);
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
         isConnected = isBluetoothActivated();
