@@ -108,7 +108,7 @@ public class ListFragment extends Fragment {
                 popupAddSki.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        newCard.setName(nameInput.getText().toString());
+                        newCard.setName(nameInput.getText().toString().trim());
                         ListFragment.adapter.notifyDataSetChanged();
                         adapter.add(newCard);
                         //sauve la carte dans le stockage interne du téléphone
@@ -210,25 +210,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-    }
-
-    protected boolean isBluetoothActivated(){
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Toast.makeText(getActivity(), "you cannot use the application", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                // Bluetooth is not enable
-                connectionBtn.setBackgroundColor(0xFFFF000);
-                connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
-                return false;
-            }
-            connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            connectionBtn.setText("Status : connected");
-            return true;
-        }
     }
 
     private void bluetoothOff(){
