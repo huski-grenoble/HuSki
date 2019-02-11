@@ -21,7 +21,6 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -55,7 +54,6 @@ public class ListFragment extends Fragment {
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
     ListView cardList;
-    Animation anim;
     BluetoothAdapter mBluetoothAdapter;
 
     public static ListFragment newInstance() {
@@ -307,7 +305,7 @@ public class ListFragment extends Fragment {
                     final cardStruct newCard = new cardStruct(arr[0], arr[1]);
                     boolean bool = false;
                     for(int k = 0; k < adapter.getCount(); k++) {
-                        if(adapter.getItem(k) == newCard){
+                        if(arrayOfCards.get(k).getUuid().equals(newCard.getUuid())){
                             bool = true;
                         }
                     }
