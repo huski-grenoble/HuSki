@@ -1,5 +1,6 @@
 package com.example.huski;
 
+import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -37,13 +38,13 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 
 public class ListFragment extends Fragment {
 
-    private static final String TAG = "MyActivity";
-
+    private String barcodeString = "";
     private static final String STATE_LIST = "State Adapter Data";
     private static Bundle savedState;
     Button connectionBtn;
@@ -63,7 +64,6 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         if(savedState == null){
             arrayOfCards = new ArrayList<cardStruct>();
             adapter = new CardAdapter(getActivity(),arrayOfCards);
@@ -71,6 +71,11 @@ public class ListFragment extends Fragment {
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
+            if(getArguments().getString("uuidCard") != null){
+                barcodeString = getArguments().getString("uuidCard");
+                Toast.makeText(getContext(), ""+barcodeString, Toast.LENGTH_SHORT).show();
+                newCard();
+            }
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
         }
@@ -91,34 +96,11 @@ public class ListFragment extends Fragment {
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
-                final cardStruct newCard = new cardStruct("coucou");
-                final EditText nameInput = (EditText) view.findViewById(R.id.initName);
-                popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-                //popupAddSki = new AlertDialog.Builder(getContext());
-                popupAddSki.create();
-                popupAddSki.setTitle("Enter a name");
-                popupAddSki.setCancelable(false);
-                popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                popupAddSki.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        newCard.setName(nameInput.getText().toString());
-                        ListFragment.adapter.notifyDataSetChanged();
-                        adapter.add(newCard);
-                        //sauve la carte dans le stockage interne du téléphone
-                        writeData(newCard);
-                    }
-                });
-
-                popupAddSki.setView(view);
-                popupAddSki.show();
-
+                AddFragment addFragment = new AddFragment();
+                addFragment.setTargetFragment(ListFragment.this,1);
+                Intent i = new Intent(getActivity().getBaseContext(),addFragment.getClass());
+                //startActivityForResult(i, 0);
+                ((MainActivity) getContext()).startTransactionFragment(addFragment);
             }
         });
 
@@ -148,6 +130,36 @@ public class ListFragment extends Fragment {
             bluetoothOff();
         }
         return v;
+    }
+
+    public void newCard() {
+        final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
+        final cardStruct newCard = new cardStruct(barcodeString);
+        final EditText nameInput = (EditText) view.findViewById(R.id.initName);
+        popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
+        //popupAddSki = new AlertDialog.Builder(getContext());
+        popupAddSki.create();
+        popupAddSki.setTitle("Enter a name");
+        popupAddSki.setCancelable(false);
+        popupAddSki.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        popupAddSki.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                newCard.setName(nameInput.getText().toString());
+                ListFragment.adapter.notifyDataSetChanged();
+                adapter.add(newCard);
+                //sauve la carte dans le stockage interne du téléphone
+                writeData(newCard);
+            }
+        });
+
+        popupAddSki.setView(view);
+        popupAddSki.show();
     }
 
     @Override
@@ -272,7 +284,8 @@ public class ListFragment extends Fragment {
 
             // Adds a line to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true /*append*/));
-            writer.write(card.getName() + "♥" + card.getUuid().toString() + "\n");
+            writer.write(card.getName() + "♥" + card.getUuid().toString());
+            writer.newLine();
             writer.close();
             // Refresh the data so it can seen when the device is plugged in a
             // computer. You may have to unplug and replug the device to see the
