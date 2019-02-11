@@ -7,18 +7,17 @@ import java.util.UUID;
 
 public class cardStruct implements Parcelable {
     private String name;
-    private UUID uuid;
+    private String cheapID;
     private gpsStruct gps;
 
     public cardStruct(String name){
         this.name = name;
-        this.uuid = UUID.randomUUID();
         this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
     }
 
-    public cardStruct(String name, String uuid){
+    public cardStruct(String name, String cheapID){
         this.name = name;
-        this.uuid = UUID.fromString(uuid);
+        this.cheapID = cheapID;
         this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
     }
 
@@ -43,10 +42,6 @@ public class cardStruct implements Parcelable {
         return name;
     }
 
-    public UUID getUuid() {
-        return uuid;
-    }
-
     public void setName(String name) {
         this.name = name;
     }
@@ -63,4 +58,8 @@ public class cardStruct implements Parcelable {
             return new cardStruct[size];
         }
     };
+
+    public String getCheapID() {
+        return cheapID;
+    }
 }

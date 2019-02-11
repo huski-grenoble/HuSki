@@ -44,7 +44,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     AlertDialog.Builder dialog;
     ImageView imBatterySki;
     ImageButton localiseBtn,deleteBtn;
-    TextView cardName,uuid;
+    TextView cardName,cheapId;
 
     public CardAdapter(Activity activity, ArrayList<cardStruct> cards){
         super(activity,0,cards);
@@ -62,7 +62,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         // Link to XML
         imBatterySki = convertView.findViewById(R.id.batterySkiLvl);
         cardName = convertView.findViewById(R.id.cardName);
-        uuid = convertView.findViewById(R.id.uuid);
+        cheapId = convertView.findViewById(R.id.cheapId);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
         // à bouger dans le truc qui recevra les données des Skis
@@ -77,7 +77,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
         // set cardName
         cardName.setText(card.getName());
-        uuid.setText(card.getUuid().toString());
+        cheapId.setText(card.getCheapID());
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,8 +154,8 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 while ((line = reader.readLine()) != null) {
                     textFromFile = line.toString();
                     String arr[] = textFromFile.split("♥", 2);
-                    Log.d("SavedData", arr[1] + " " + card.getUuid().toString());
-                    if(arr[1].equals(card.getUuid().toString())){
+                    Log.d("SavedData", arr[1] + " " + card.getCheapID().toString());
+                    if(arr[1].equals(card.getCheapID().toString())){
                         removeLine(testFile, i);
                         Toast.makeText(getContext(), "Card deleted: " + arr[0], Toast.LENGTH_LONG).show();
                     }

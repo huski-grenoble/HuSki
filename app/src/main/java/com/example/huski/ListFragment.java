@@ -73,7 +73,6 @@ public class ListFragment extends Fragment {
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
             if(getArguments().getString("uuidCard") != null){
                 barcodeString = getArguments().getString("uuidCard");
-                Toast.makeText(getContext(), ""+barcodeString, Toast.LENGTH_SHORT).show();
                 newCard();
             }
             adapter = new CardAdapter(getActivity(),arrayOfCards);
@@ -134,7 +133,7 @@ public class ListFragment extends Fragment {
 
     public void newCard() {
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
-        final cardStruct newCard = new cardStruct(barcodeString);
+        final cardStruct newCard = new cardStruct(barcodeString,barcodeString);
         final EditText nameInput = (EditText) view.findViewById(R.id.initName);
         popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
         //popupAddSki = new AlertDialog.Builder(getContext());
@@ -284,7 +283,7 @@ public class ListFragment extends Fragment {
 
             // Adds a line to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true /*append*/));
-            writer.write(card.getName() + "♥" + card.getUuid().toString());
+            writer.write(card.getName() + "♥" + card.getCheapID().toString());
             writer.newLine();
             writer.close();
             // Refresh the data so it can seen when the device is plugged in a
@@ -318,7 +317,7 @@ public class ListFragment extends Fragment {
                     final cardStruct newCard = new cardStruct(arr[0], arr[1]);
                     boolean bool = false;
                     for(int k = 0; k < adapter.getCount(); k++) {
-                        if(arrayOfCards.get(k).getUuid().equals(newCard.getUuid())){
+                        if(arrayOfCards.get(k).getCheapID().equals(newCard.getCheapID())){
                             bool = true;
                         }
                     }

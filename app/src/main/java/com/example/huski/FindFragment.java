@@ -161,7 +161,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         tvDist = (TextView) view.findViewById(R.id.tvDist);
         //Set text for which card is tracked
         tvCardName.setText(currentCard.getName());
-        tvCardUuid.setText(currentCard.getUuid().toString());
+        tvCardUuid.setText(currentCard.getCheapID().toString());
     }
 
     @Override
