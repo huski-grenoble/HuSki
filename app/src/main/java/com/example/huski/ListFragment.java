@@ -272,7 +272,7 @@ public class ListFragment extends Fragment {
 
             // Adds a line to the file
             BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true /*append*/));
-            writer.write(card.getName() + "/" + card.getUuid().toString() + "\n");
+            writer.write(card.getName() + "♥" + card.getUuid().toString() + "\n");
             writer.close();
             // Refresh the data so it can seen when the device is plugged in a
             // computer. You may have to unplug and replug the device to see the
@@ -301,7 +301,7 @@ public class ListFragment extends Fragment {
 
                 while ((line = reader.readLine()) != null) {
                     textFromFile = line.toString();
-                    String arr[] = textFromFile.split("/", 2);
+                    String arr[] = textFromFile.split("♥", 2);
                     final cardStruct newCard = new cardStruct(arr[0], arr[1]);
                     boolean bool = false;
                     for(int k = 0; k < adapter.getCount(); k++) {

@@ -153,7 +153,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
                 while ((line = reader.readLine()) != null) {
                     textFromFile = line.toString();
-                    String arr[] = textFromFile.split("/", 2);
+                    String arr[] = textFromFile.split("♥", 2);
                     Log.d("SavedData", arr[1] + " " + card.getUuid().toString());
                     if(arr[1].equals(card.getUuid().toString())){
                         removeLine(testFile, i);
