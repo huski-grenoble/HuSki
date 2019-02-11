@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,8 +26,17 @@ import com.example.huski.ListFragment;
 import com.example.huski.MainActivity;
 import com.example.huski.R;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Scanner;
 
 public class CardAdapter extends ArrayAdapter<cardStruct> {
     //Variable definition
@@ -42,7 +52,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     }
 
     @Override
-    public View getView(final int position,View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         // Get the data item for this position
         final cardStruct card = getItem(position);
         // Check if an existing view is being reused, otherwise inflate the view
@@ -75,6 +85,11 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 ListFragment.arrayOfCards.remove(card);
                 ListFragment.adapter.notifyDataSetChanged();
                 ListFragment.adapter.notifyDataSetInvalidated();
+                try {
+                    deleteData(card);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -122,4 +137,49 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         return convertView;
     }
 
+    public void deleteData(cardStruct card) throws IOException {
+        int i = 0;
+        String textFromFile = "";
+        // Gets the file from the primary external storage space of the
+        // current application.
+        File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
+        if (testFile != null) {
+            StringBuilder stringBuilder = new StringBuilder();
+            // Reads the data from the file
+            BufferedReader reader = null;
+            try {
+                reader = new BufferedReader(new FileReader(testFile));
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    textFromFile = line.toString();
+                    String arr[] = textFromFile.split("/", 2);
+                    Log.d("SavedData", arr[1] + " " + card.getUuid().toString());
+                    if(arr[1].equals(card.getUuid().toString())){
+                        removeLine(testFile, i);
+                        Toast.makeText(getContext(), "Card deleted: " + arr[0], Toast.LENGTH_LONG).show();
+                    }
+                    i++;
+                }
+                reader.close();
+            } catch (Exception e) {
+                Log.e("ReadWriteFile", "Unable to read the CardsSaved.txt file.");
+            }
+        }
+    }
+
+    public void removeLine(final File file, final int lineIndex) throws IOException {
+        final List<String> lines = new LinkedList<>();
+        final Scanner reader = new Scanner(new FileInputStream(file), "UTF-8");
+        while(reader.hasNextLine())
+            lines.add(reader.nextLine());
+        reader.close();
+        assert lineIndex >= 0 && lineIndex <= lines.size() - 1;
+        lines.remove(lineIndex);
+        final BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
+        for(final String line : lines)
+            writer.write(line);
+        writer.flush();
+        writer.close();
+    }
 }

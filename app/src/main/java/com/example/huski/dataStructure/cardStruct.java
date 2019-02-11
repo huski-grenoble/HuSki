@@ -16,6 +16,13 @@ public class cardStruct implements Parcelable {
         this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
     }
 
+    public cardStruct(String name, String uuid){
+        this.name = name;
+        this.uuid = UUID.fromString(uuid);
+        this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
+    }
+
+
     private cardStruct(Parcel in) {
         this.name = in.readString();
     }

@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
+import android.media.MediaScannerConnection;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
@@ -15,6 +16,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -28,6 +30,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.huski.dataStructure.CardAdapter;
 import com.example.huski.dataStructure.cardStruct;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -61,13 +70,15 @@ public class ListFragment extends Fragment {
             arrayOfCards = new ArrayList<cardStruct>();
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
-
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
         }
+
+        //va chercher dans le stockage interne les cartes enregistrées.
+        readData();
 
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
@@ -102,6 +113,8 @@ public class ListFragment extends Fragment {
                         newCard.setName(nameInput.getText().toString());
                         ListFragment.adapter.notifyDataSetChanged();
                         adapter.add(newCard);
+                        //sauve la carte dans le stockage interne du téléphone
+                        writeData(newCard);
                     }
                 });
 
@@ -199,8 +212,6 @@ public class ListFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        final cardStruct newCard = new cardStruct("coucou");
-        adapter.add(newCard);
     }
 
     protected boolean isBluetoothActivated(){
@@ -252,8 +263,64 @@ public class ListFragment extends Fragment {
         }
     };
 
+    public void writeData(cardStruct card){
+        try {
+            // Creates a file in the primary external storage space of the
+            // current application.
+            // If the file does not exists, it is created.
+            File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
+            if (!testFile.exists())
+                testFile.createNewFile();
 
+            // Adds a line to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true /*append*/));
+            writer.write(card.getName() + "/" + card.getUuid().toString() + "\n");
+            writer.close();
+            // Refresh the data so it can seen when the device is plugged in a
+            // computer. You may have to unplug and replug the device to see the
+            // latest changes. This is not necessary if the user should not modify
+            // the files.
+            MediaScannerConnection.scanFile(getContext(),
+                    new String[]{testFile.toString()},
+                    null,
+                    null);
+        } catch (IOException e) {
+            Log.e("ReadWriteFile", "Unable to write to the CardsSaved.txt file.");
+        }
+    }
 
+    public void readData(){
+        String textFromFile = "";
+        // Gets the file from the primary internal storage space of the
+        // current application.
+        File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
+        if (testFile != null) {
+            // Reads the data from the file
+            BufferedReader reader;
+            try {
+                reader = new BufferedReader(new FileReader(testFile));
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    textFromFile = line.toString();
+                    String arr[] = textFromFile.split("/", 2);
+                    final cardStruct newCard = new cardStruct(arr[0], arr[1]);
+                    boolean bool = false;
+                    for(int k = 0; k < adapter.getCount(); k++) {
+                        if(adapter.getItem(k) == newCard){
+                            bool = true;
+                        }
+                    }
+                    if(!bool){
+                        adapter.add(newCard);
+                    }
+                }
+                reader.close();
+            } catch (Exception e) {
+                Log.e("ReadWriteFile", "Unable to read the CardsSaved.txt file.");
+            }
+        }
+    }
 
     private void onCompletion(){
         mySwipeRefreshLayout.setRefreshing(false);
