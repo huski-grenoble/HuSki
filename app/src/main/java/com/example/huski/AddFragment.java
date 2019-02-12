@@ -58,7 +58,7 @@ public class AddFragment extends Fragment implements BarcodeReader.BarcodeReader
 
     @Override
     public void onScannedMultiple(List<Barcode> barcodes) {
-
+        Toast.makeText(getContext(), "Only scan one QRcode please", Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -73,6 +73,6 @@ public class AddFragment extends Fragment implements BarcodeReader.BarcodeReader
 
     @Override
     public void onCameraPermissionDenied() {
-
+        Toast.makeText(getContext(), "Set permission for the camera", Toast.LENGTH_SHORT).show();
     }
 }
