@@ -45,6 +45,7 @@ import java.util.Set;
 
 public class ListFragment extends Fragment {
 
+    //Variable Definitions
     private String barcodeString = "";
     private static final String STATE_LIST = "State Adapter Data";
     private static final String TAG = "debugging";
@@ -66,18 +67,16 @@ public class ListFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Restore saving data
         if(savedState == null){
             arrayOfCards = new ArrayList<cardStruct>();
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
         }
         else{
-
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
             FragmentManager fm = getFragmentManager();
-            /* for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
-                Toast.makeText(getContext(), ""+fm.getBackStackEntryAt(entry).getName(), Toast.LENGTH_SHORT).show();
-            } */
+            //If  barecode has been scanned
            if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
                 newCard();
@@ -86,11 +85,12 @@ public class ListFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
 
-        //va chercher dans le stockage interne les cartes enregistrées.
+        //read saved cards from the intern file (restore data)
         readData();
 
         View v = inflater.inflate(R.layout.fragment_list, container, false);
 
+        //link to XML
         cardList = v.findViewById(R.id.list);
         TextView emptyText = v.findViewById(android.R.id.empty);
         cardList.setEmptyView(emptyText);
@@ -99,6 +99,7 @@ public class ListFragment extends Fragment {
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
 
+        //add a card -> link to AddFragment
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -107,6 +108,7 @@ public class ListFragment extends Fragment {
             }
         });
 
+        //Open Bluetooth settings
         connectionBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -114,6 +116,7 @@ public class ListFragment extends Fragment {
             }
         });
 
+        //Refresh the page on vertical swipe
         mySwipeRefreshLayout.setOnRefreshListener(
                 new SwipeRefreshLayout.OnRefreshListener() {
                     @Override
@@ -124,8 +127,11 @@ public class ListFragment extends Fragment {
                 }
         );
 
+        //Set list & bluetooth adapter
         cardList.setAdapter(adapter);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+
+        //Check Bluetooth
         if(mBluetoothAdapter.isEnabled()){
             bluetoothOn();
         }
@@ -135,12 +141,13 @@ public class ListFragment extends Fragment {
         return v;
     }
 
+    //Called when barecode has been received : create a new card.
     public void newCard() {
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
         final cardStruct newCard = new cardStruct(barcodeString,barcodeString);
         final EditText nameInput = (EditText) view.findViewById(R.id.initName);
+        //Create Popup to rename the card
         popupAddSki = new AlertDialog.Builder(new ContextThemeWrapper(getContext(), R.style.AlertDialogCustom));
-        //popupAddSki = new AlertDialog.Builder(getContext());
         popupAddSki.create();
         popupAddSki.setTitle("Enter a name");
         popupAddSki.setCancelable(false);
@@ -160,14 +167,15 @@ public class ListFragment extends Fragment {
                 writeData(newCard);
             }
         });
-
         popupAddSki.setView(view);
         popupAddSki.show();
     }
 
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //Bluetooth Listener
         IntentFilter filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
         getActivity().registerReceiver(mBroadcastReceiver1, filter1);
     }
@@ -176,7 +184,7 @@ public class ListFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
-
+    //Check bluetooth devices which are available
     protected void bluetoothOn() {
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
         connectionBtn.setTextColor(Color.WHITE);
@@ -227,31 +235,14 @@ public class ListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    protected boolean isBluetoothActivated(){
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-        if (mBluetoothAdapter == null) {
-            // Device does not support Bluetooth
-            Toast.makeText(getActivity(), "you cannot use the application", Toast.LENGTH_SHORT).show();
-            return false;
-        } else {
-            if (!mBluetoothAdapter.isEnabled()) {
-                // Bluetooth is not enable
-                connectionBtn.setBackgroundColor(0xFFFF000);
-                connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
-                return false;
-            }
-            connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-            connectionBtn.setText("Status : connected");
-            return true;
-        }
-    }
-
+    //Called when bluetooth if off
     private void bluetoothOff(){
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
         connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
     }
 
+    //Bluetooth listener
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
 
         @Override
