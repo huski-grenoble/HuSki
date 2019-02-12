@@ -177,8 +177,10 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         assert lineIndex >= 0 && lineIndex <= lines.size() - 1;
         lines.remove(lineIndex);
         final BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
-        for(final String line : lines)
+        for(final String line : lines){
             writer.write(line);
+            writer.newLine();
+        }
         writer.flush();
         writer.close();
     }
