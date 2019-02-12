@@ -15,6 +15,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -46,6 +47,7 @@ public class ListFragment extends Fragment {
 
     private String barcodeString = "";
     private static final String STATE_LIST = "State Adapter Data";
+    private static final String TAG = "debugging";
     private static Bundle savedState;
     Button connectionBtn;
     FloatingActionButton addBtn;
@@ -70,8 +72,13 @@ public class ListFragment extends Fragment {
             adapter.notifyDataSetChanged();
         }
         else{
+
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
-            if(getArguments().getString("uuidCard") != null){
+            FragmentManager fm = getFragmentManager();
+            /* for(int entry = 0; entry < fm.getBackStackEntryCount(); entry++){
+                Toast.makeText(getContext(), ""+fm.getBackStackEntryAt(entry).getName(), Toast.LENGTH_SHORT).show();
+            } */
+           if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
                 newCard();
             }
@@ -96,9 +103,6 @@ public class ListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 AddFragment addFragment = new AddFragment();
-                addFragment.setTargetFragment(ListFragment.this,1);
-                Intent i = new Intent(getActivity().getBaseContext(),addFragment.getClass());
-                //startActivityForResult(i, 0);
                 ((MainActivity) getContext()).startTransactionFragment(addFragment);
             }
         });

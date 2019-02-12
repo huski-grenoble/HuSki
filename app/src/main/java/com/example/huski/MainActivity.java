@@ -22,18 +22,20 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Fragment fragmentList;
+    private Fragment fragmentTool;
     private Fragment fragmentAdd;
-    private Fragment fragmentFind;
 
-    private static final int  FRAGMENT_LIST = 0;
-    private static final int  FRAGMENT_ADD = 1;
-    private static final int  FRAGMENT_FIND = 2;
+    protected static final int  FRAGMENT_LIST = 0;
+    protected static final int  FRAGMENT_TOOL = 1;
+    protected static final int  FRAGMENT_ADD = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +51,7 @@ public class MainActivity extends AppCompatActivity
         toggle.syncState();
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        showListFragment();
+        showFragment(FRAGMENT_LIST);
     }
 
 
@@ -69,7 +71,6 @@ public class MainActivity extends AppCompatActivity
     public void onBackPressed() {
 
         int count = getFragmentManager().getBackStackEntryCount();
-
         if (count == 0) {
             super.onBackPressed();
             //additional code
@@ -103,24 +104,25 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_camera) {
             this.showListFragment();
-        } else if (id == R.id.nav_gallery) {
-            this.showAddFragment();
         }else if (id == R.id.nav_manage) {
-            startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+            //startActivityForResult(new Intent(android.provider.Settings.ACTION_SETTINGS), 0);
+            this.showToolFragment();
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
-    private void showFragment(int fragmentIdentifier){
+    public void showFragment(int fragmentIdentifier){
         switch (fragmentIdentifier){
             case FRAGMENT_LIST :
                 this.showListFragment();
                 break;
-            case FRAGMENT_ADD:
-                this.showAddFragment();
+            case FRAGMENT_TOOL :
+                this.showToolFragment();
                 break;
+            case FRAGMENT_ADD :
+                this.showAddFragment();
             default:
                 break;
         }
@@ -130,20 +132,21 @@ public class MainActivity extends AppCompatActivity
         this.startTransactionFragment(this.fragmentList);
     }
 
+    private void showToolFragment(){
+        if (this.fragmentTool == null) this.fragmentTool = ToolFragment.newInstance();
+        this.startTransactionFragment(this.fragmentTool);
+    }
+
     private void showAddFragment(){
         if (this.fragmentAdd == null) this.fragmentAdd = AddFragment.newInstance();
         this.startTransactionFragment(this.fragmentAdd);
     }
 
-    public void showFindFragment(){
-        if (this.fragmentFind == null) this.fragmentFind = FindFragment.newInstance();
-        this.startTransactionFragment(this.fragmentFind);
-    }
-
     public void startTransactionFragment(Fragment fragment){
         if (!fragment.isVisible()){
+            //Toast.makeText(this, ""+fragment, Toast.LENGTH_SHORT).show();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_view, fragment).commit();
+                    .replace(R.id.fragment_view, fragment).addToBackStack(fragment.getTag()).commit();
         }
     }
 
