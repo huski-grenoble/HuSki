@@ -23,7 +23,7 @@ jobs:
             #    name: Run UnitTest
             #    command: ./gradlew ExampleUnitTest
             - run:
-                name: Setup emulator
+                name: Setup emulator 
                 command: sdkmanager "system-images;android-16;default;armeabi-v7a" | avdmanager create avd -n test -k "system-images;android-16;default;armeabi-v7a"
             - run:
                 name: Launch emulator
