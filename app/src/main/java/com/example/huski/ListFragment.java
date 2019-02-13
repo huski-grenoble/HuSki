@@ -1,5 +1,6 @@
 package com.example.huski;
 
+import android.annotation.SuppressLint;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.BroadcastReceiver;
@@ -10,6 +11,8 @@ import android.content.IntentFilter;
 import android.graphics.Color;
 import android.media.MediaScannerConnection;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -55,6 +58,7 @@ public class ListFragment extends Fragment {
     public static CardAdapter adapter;
     ListView cardList;
     BluetoothAdapter mBluetoothAdapter;
+    Peripherique periph;
 
     public static ListFragment newInstance() {
         return (new ListFragment());
@@ -113,6 +117,7 @@ public class ListFragment extends Fragment {
                         adapter.add(newCard);
                         //sauve la carte dans le stockage interne du téléphone
                         writeData(newCard);
+                        periph.envoyer("test");
                     }
                 });
 
@@ -154,7 +159,8 @@ public class ListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         IntentFilter filter1 = new IntentFilter(BluetoothAdapter.ACTION_STATE_CHANGED);
-        getActivity().registerReceiver(mBroadcastReceiver1, filter1);
+        if(getActivity() != null)
+            getActivity().registerReceiver(mBroadcastReceiver1, filter1);
     }
 
     @Override
@@ -163,20 +169,24 @@ public class ListFragment extends Fragment {
     }
 
     protected void bluetoothOn() {
-        connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
-        connectionBtn.setTextColor(Color.WHITE);
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         String deviceName = "";
+        BluetoothDevice bDevice = null;
         if (pairedDevices.size() > 0) {
             boolean isPaired = false;
             for (BluetoothDevice d : pairedDevices) {
-                if (d.getBondState() == 12) {
+                if (d.getBondState() == BluetoothDevice.BOND_BONDED) {
                     isPaired = true;
                     deviceName = d.getName();
+                    bDevice = d;
                 }
             }
             if (isPaired == true) {
+                connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
+                connectionBtn.setTextColor(Color.WHITE);
                 connectionBtn.setText("Status : connected to " + deviceName);
+                periph = new Peripherique(bDevice, mHandler);
+                periph.connecter();
             } else {
                 connectionBtn.setText("No device found");
             }
@@ -303,5 +313,33 @@ public class ListFragment extends Fragment {
 
     private void onCompletion(){
         mySwipeRefreshLayout.setRefreshing(false);
+    }
+
+    @SuppressLint("HandlerLeak")
+    private final Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch(msg.arg1){
+                case Peripherique.CODE_CONNEXION:
+                    Log.d("Handler", "connected to " + msg.getData().toString());
+                    connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    connectionBtn.setTextColor(Color.WHITE);
+                    connectionBtn.setText("Status : socket opened");
+                    break;
+                case Peripherique.CODE_DECONNEXION:
+                    Log.d("Handler", "Disconnected");
+                    break;
+                case Peripherique.CODE_RECEPTION:
+                    Log.d("Handler", "Message received : " + msg.getData().toString());
+                    parseData(msg.obj.toString());
+                    break;
+            }
+        }
+    };
+
+    public void parseData(String msg){
+        String data[] = msg.split(" ", 6);
+
+
     }
 }
