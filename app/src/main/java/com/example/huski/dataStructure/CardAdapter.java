@@ -65,15 +65,6 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         uuid = convertView.findViewById(R.id.uuid);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
-        // à bouger dans le truc qui recevra les données des Skis
-        if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
-            Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
-            animation.setDuration(500); //1 second duration for each animation cycle
-            animation.setInterpolator(new LinearInterpolator());
-            animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
-            animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
-            imBatterySki.startAnimation(animation); //to start animation
-        }
 
         // set cardName
         cardName.setText(card.getName());

@@ -24,6 +24,9 @@ import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -32,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.huski.dataStructure.CardAdapter;
 import com.example.huski.dataStructure.cardStruct;
+import com.example.huski.dataStructure.gpsStruct;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -53,12 +57,14 @@ public class ListFragment extends Fragment {
     FloatingActionButton addBtn;
     AlertDialog.Builder popupAddSki;
     ImageView imBatterySki;
+    ImageView imBatteryGW;
     SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
     ListView cardList;
     BluetoothAdapter mBluetoothAdapter;
     Peripherique periph;
+    private int batteryGW;
 
     public static ListFragment newInstance() {
         return (new ListFragment());
@@ -89,6 +95,7 @@ public class ListFragment extends Fragment {
         cardList.setEmptyView(emptyText);
         addBtn = (FloatingActionButton) v.findViewById(R.id.addBtn);
         imBatterySki = v.findViewById(R.id.batterySkiLvl);
+        imBatteryGW = v.findViewById(R.id.batteryGWLvl);
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
 
@@ -293,7 +300,7 @@ public class ListFragment extends Fragment {
                 while ((line = reader.readLine()) != null) {
                     textFromFile = line.toString();
                     String arr[] = textFromFile.split("♥", 2);
-                    final cardStruct newCard = new cardStruct(arr[0], arr[1]);
+                    final cardStruct newCard = new cardStruct(arr[0], arr[1], 0);
                     boolean bool = false;
                     for(int k = 0; k < adapter.getCount(); k++) {
                         if(arrayOfCards.get(k).getUuid().equals(newCard.getUuid())){
@@ -338,8 +345,41 @@ public class ListFragment extends Fragment {
     };
 
     public void parseData(String msg){
-        String data[] = msg.split(" ", 6);
-
-
+        String data[] = msg.split(" ", 7);
+        Boolean isInList = false;
+        cardStruct foundCard = null;
+        for(int k = 0; k < adapter.getCount(); k++) {
+            if(arrayOfCards.get(k).getUuid().toString().equals(data[0])){
+                isInList = true;
+                foundCard = arrayOfCards.get(k);
+                break;
+            }
+        }
+        if(isInList && data.length == 7){
+            foundCard.setGps(new gpsStruct(Double.parseDouble(data[2]), Double.parseDouble(data[1]), Double.parseDouble(data[3])));
+            foundCard.setBatteryLvl(Integer.parseInt(data[4]));
+            String lvl = "battery" + foundCard.getBatteryLvl();
+            imBatterySki.setImageResource(getContext().getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
+            if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
+                Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
+                animation.setDuration(500); //1 second duration for each animation cycle
+                animation.setInterpolator(new LinearInterpolator());
+                animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
+                animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
+                imBatterySki.startAnimation(animation); //to start animation
+            }
+            this.batteryGW = Integer.parseInt(data[5]);
+            String lvl2 = "battery" + this.batteryGW;
+            imBatteryGW.setImageResource(getContext().getResources().getIdentifier(lvl2, "drawable", "com.example.huski"));
+            if(imBatteryGW.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
+                Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
+                animation.setDuration(500); //1 second duration for each animation cycle
+                animation.setInterpolator(new LinearInterpolator());
+                animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
+                animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
+                imBatteryGW.startAnimation(animation); //to start animation
+            }
+            foundCard.setRSSI(Integer.parseInt(data[6]));
+        }
     }
 }

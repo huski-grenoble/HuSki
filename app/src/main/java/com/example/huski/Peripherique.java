@@ -27,7 +27,7 @@ public class Peripherique extends Thread {
     public final static int CODE_CONNEXION = 0;
     public final static int CODE_RECEPTION = 1;
     public final static int CODE_DECONNEXION = 2;
-    public final static int SIZE_BUFFER = 70; //67 max, margin 3
+    public final static int SIZE_BUFFER = 75; //72 max, margin 3
 
 
     public Peripherique(BluetoothDevice device, Handler handler) {
@@ -151,7 +151,7 @@ public class Peripherique extends Thread {
         public void run() {
             while (!fini) {
                 try {
-                    if (receiveStream.available() > 0) {
+                    if (receiveStream.available() > 0 && receiveStream.available() < (SIZE_BUFFER + 10)) {
                         byte buffer[] = new byte[SIZE_BUFFER];
                         int k = receiveStream.read(buffer, 0, 100);
                         Log.d("In TRECEPTION", "waiting for data to receive");
