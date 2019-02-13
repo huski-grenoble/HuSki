@@ -10,7 +10,7 @@ public class cardStruct implements Parcelable {
     private UUID uuid;
     private gpsStruct gps;
     private int RSSI;
-    private int batteryLvl = 3;
+    private int batteryLvl = 0;
 
     public cardStruct(String name){
         this.name = name;

@@ -31,11 +31,22 @@
         android:src="@drawable/baseline_add_circle_black_18dp"
         />
 
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/batteryGWLvl"
+        android:layout_above="@id/connectionBtn"
+        android:layout_marginBottom="13dp"
+        android:layout_marginRight="10dp"
+        android:textSize="13dp"
+        android:text="Gateway battery level:" />
+
     <ImageView
         android:id="@+id/batteryGWLvl"
         android:layout_width="70dp"
         android:layout_height="35dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginBottom="5dp"
         android:layout_above="@id/connectionBtn"
         android:layout_centerHorizontal="true"
         android:scaleType="fitXY"

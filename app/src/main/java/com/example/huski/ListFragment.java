@@ -64,7 +64,7 @@ public class ListFragment extends Fragment {
     ListView cardList;
     BluetoothAdapter mBluetoothAdapter;
     Peripherique periph;
-    private int batteryGW;
+    public int batteryGW = 0;
 
     public static ListFragment newInstance() {
         return (new ListFragment());
@@ -99,6 +99,17 @@ public class ListFragment extends Fragment {
         connectionBtn = v.findViewById(R.id.connectionBtn);
         mySwipeRefreshLayout =  v.findViewById(R.id.swiperefresh);
 
+        String lvl2 = "battery" + this.batteryGW;
+        imBatteryGW.setImageResource(getContext().getResources().getIdentifier(lvl2, "drawable", "com.example.huski"));
+        if(imBatteryGW.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
+            Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
+            animation.setDuration(500); //1 second duration for each animation cycle
+            animation.setInterpolator(new LinearInterpolator());
+            animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
+            animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
+            imBatteryGW.startAnimation(animation); //to start animation
+        }
+
         addBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -124,7 +135,6 @@ public class ListFragment extends Fragment {
                         adapter.add(newCard);
                         //sauve la carte dans le stockage interne du téléphone
                         writeData(newCard);
-                        periph.envoyer("test");
                     }
                 });
 
