@@ -45,7 +45,6 @@ public class AddFragment extends Fragment implements BarcodeReader.BarcodeReader
 
     @Override
     public void onScanned(final Barcode barcode) {
-        barcodeReader.playBeep();
         ListFragment frag = new ListFragment();
         Bundle arguments = new Bundle();
         arguments.putString( "uuidCard" , barcode.displayValue);

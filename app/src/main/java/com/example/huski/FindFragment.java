@@ -3,7 +3,6 @@ package com.example.huski;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -15,7 +14,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.speech.tts.TextToSpeech;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,13 +25,9 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
-
-import java.util.Arrays;
-import java.util.UUID;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -161,7 +155,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         tvDist = (TextView) view.findViewById(R.id.tvDist);
         //Set text for which card is tracked
         tvCardName.setText(currentCard.getName());
-        tvCardUuid.setText(currentCard.getCheapID().toString());
+        tvCardUuid.setText(currentCard.getChipId().toString());
     }
 
     @Override
