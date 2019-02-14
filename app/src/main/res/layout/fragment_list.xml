@@ -20,6 +20,17 @@
         android:layout_height="wrap_content"
         android:text="Add a card by clicking the button below, hold one to rename it" />
 
+    <!--<android.support.design.widget.FloatingActionButton
+        android:id="@+id/testBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_above="@+id/addBtn"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/baseline_add_circle_black_18dp"
+        />!-->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
@@ -31,11 +42,34 @@
         android:src="@drawable/baseline_add_circle_black_18dp"
         />
 
+    <TextView
+        android:id="@android:id/empty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toLeftOf="@id/batteryGWLvl"
+        android:layout_above="@id/connectionBtn"
+        android:layout_marginBottom="13dp"
+        android:layout_marginRight="10dp"
+        android:textSize="13dp"
+        android:text="Gateway battery level:" />
+
+    <ImageView
+        android:id="@+id/batteryGWLvl"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:layout_marginBottom="5dp"
+        android:layout_above="@id/connectionBtn"
+        android:layout_centerHorizontal="true"
+        android:scaleType="fitXY"
+        android:src="@drawable/battery0" />
+    />
+
     <Button
         android:id="@+id/connectionBtn"
         android:layout_width="fill_parent"
         android:layout_marginHorizontal="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"></Button>
+        android:layout_alignParentBottom="true">
+    </Button>
 </RelativeLayout>
     </android.support.v4.widget.SwipeRefreshLayout  >

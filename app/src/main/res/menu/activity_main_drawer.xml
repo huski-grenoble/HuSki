@@ -6,12 +6,8 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_camera"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/baseline_list_24"
             android:title="Ski List" />
-        <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Add Ski" />
         <item
             android:id="@+id/nav_manage"
             android:icon="@drawable/ic_menu_manage"

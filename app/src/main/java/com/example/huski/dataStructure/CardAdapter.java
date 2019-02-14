@@ -3,10 +3,6 @@ package com.example.huski.dataStructure;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -44,7 +40,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     AlertDialog.Builder dialog;
     ImageView imBatterySki;
     ImageButton localiseBtn,deleteBtn;
-    TextView cardName,uuid;
+    TextView cardName,chipId;
 
     public CardAdapter(Activity activity, ArrayList<cardStruct> cards){
         super(activity,0,cards);
@@ -62,10 +58,11 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         // Link to XML
         imBatterySki = convertView.findViewById(R.id.batterySkiLvl);
         cardName = convertView.findViewById(R.id.cardName);
-        uuid = convertView.findViewById(R.id.uuid);
+        chipId = convertView.findViewById(R.id.cheapId);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
-        // à bouger dans le truc qui recevra les données des Skis
+        String lvl = "battery" + card.getBatteryLvl();
+        imBatterySki.setImageResource(getContext().getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
         if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
             Animation animation = new AlphaAnimation(1, 0); //to change visibility from visible to invisible
             animation.setDuration(500); //1 second duration for each animation cycle
@@ -77,7 +74,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
         // set cardName
         cardName.setText(card.getName());
-        uuid.setText(card.getUuid().toString());
+        chipId.setText(card.getChipId());
 
         deleteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -154,8 +151,8 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 while ((line = reader.readLine()) != null) {
                     textFromFile = line.toString();
                     String arr[] = textFromFile.split("♥", 2);
-                    Log.d("SavedData", arr[1] + " " + card.getUuid().toString());
-                    if(arr[1].equals(card.getUuid().toString())){
+                    Log.d("SavedData", arr[1] + " " + card.getChipId().toString());
+                    if(arr[1].equals(card.getChipId().toString())){
                         removeLine(testFile, i);
                         Toast.makeText(getContext(), "Card deleted: " + arr[0], Toast.LENGTH_LONG).show();
                     }
@@ -177,8 +174,10 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         assert lineIndex >= 0 && lineIndex <= lines.size() - 1;
         lines.remove(lineIndex);
         final BufferedWriter writer = new BufferedWriter(new FileWriter(file, false));
-        for(final String line : lines)
+        for(final String line : lines) {
             writer.write(line);
+            writer.newLine();
+        }
         writer.flush();
         writer.close();
     }
