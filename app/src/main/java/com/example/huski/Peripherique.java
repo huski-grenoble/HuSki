@@ -153,7 +153,7 @@ public class Peripherique extends Thread {
                 try {
                     if (receiveStream.available() > 0 && receiveStream.available() < (SIZE_BUFFER + 10)) {
                         byte buffer[] = new byte[SIZE_BUFFER];
-                        int k = receiveStream.read(buffer, 0, 100);
+                        int k = receiveStream.read(buffer, 0, SIZE_BUFFER);
                         Log.d("In TRECEPTION", "waiting for data to receive");
                         if (k > 0) {
                             byte rawdata[] = new byte[k];

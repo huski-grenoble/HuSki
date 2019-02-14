@@ -56,7 +56,7 @@ public class ListFragment extends Fragment {
     private static final String TAG = "debugging";
     private static Bundle savedState;
     Button connectionBtn;
-    FloatingActionButton addBtn;
+    FloatingActionButton addBtn, testBtn;
     AlertDialog.Builder popupAddSki;
     ImageView imBatterySki;
     ImageView imBatteryGW;
@@ -103,6 +103,7 @@ public class ListFragment extends Fragment {
         TextView emptyText = v.findViewById(android.R.id.empty);
         cardList.setEmptyView(emptyText);
         addBtn = (FloatingActionButton) v.findViewById(R.id.addBtn);
+        //testBtn = v.findViewById(R.id.testBtn);
         imBatterySki = v.findViewById(R.id.batterySkiLvl);
         imBatteryGW = v.findViewById(R.id.batteryGWLvl);
         connectionBtn = v.findViewById(R.id.connectionBtn);
@@ -126,6 +127,13 @@ public class ListFragment extends Fragment {
                 ((MainActivity) getContext()).startTransactionFragment(addFragment);
             }
         });
+
+/*        testBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                periph.envoyer("E0AC55A4AE301");
+            }
+        });*/
 
         //Open Bluetooth settings
         connectionBtn.setOnClickListener(new View.OnClickListener() {

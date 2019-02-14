@@ -20,6 +20,17 @@
         android:layout_height="wrap_content"
         android:text="Add a card by clicking the button below, hold one to rename it" />
 
+    <!--<android.support.design.widget.FloatingActionButton
+        android:id="@+id/testBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:layout_above="@+id/addBtn"
+        android:layout_alignParentRight="true"
+        android:src="@drawable/baseline_add_circle_black_18dp"
+        />!-->
+
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/addBtn"
         android:layout_width="wrap_content"
