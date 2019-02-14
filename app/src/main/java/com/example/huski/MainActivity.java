@@ -144,9 +144,9 @@ public class MainActivity extends AppCompatActivity
 
     public void startTransactionFragment(Fragment fragment){
         if (!fragment.isVisible()){
-            //Toast.makeText(this, ""+fragment, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, ""+fragment.getClass().toString(), Toast.LENGTH_SHORT).show();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_view, fragment).addToBackStack(fragment.getTag()).commit();
+                    .replace(R.id.fragment_view, fragment,fragment.getClass().toString()).addToBackStack(fragment.getTag()).commit();
         }
     }
 

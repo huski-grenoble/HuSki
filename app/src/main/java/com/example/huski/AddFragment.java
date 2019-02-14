@@ -6,6 +6,7 @@ import android.nfc.tech.NfcBarcode;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.SurfaceView;
@@ -24,6 +25,8 @@ import info.androidhive.barcode.BarcodeReader;
 public class AddFragment extends Fragment implements BarcodeReader.BarcodeReaderListener {
 
     private BarcodeReader barcodeReader;
+    private static final String TAG = "debugging";
+    private final String fragmentClass = "class com.example.huski.ListFragment";
 
     public static AddFragment newInstance() {
         return (new AddFragment());
@@ -45,8 +48,7 @@ public class AddFragment extends Fragment implements BarcodeReader.BarcodeReader
 
     @Override
     public void onScanned(final Barcode barcode) {
-        barcodeReader.playBeep();
-        ListFragment frag = new ListFragment();
+        ListFragment frag =(ListFragment) getActivity().getSupportFragmentManager().findFragmentByTag(fragmentClass);
         Bundle arguments = new Bundle();
         arguments.putString( "uuidCard" , barcode.displayValue);
         frag.setArguments(arguments);
