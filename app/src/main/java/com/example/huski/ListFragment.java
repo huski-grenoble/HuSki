@@ -391,7 +391,7 @@ public class ListFragment extends Fragment {
         Boolean isInList = false;
         cardStruct foundCard = null;
         for(int k = 0; k < adapter.getCount(); k++) {
-            if(arrayOfCards.get(k).getChipId().toString().equals(data[0])){
+            if(arrayOfCards.get(k).getChipId().equals(data[0])){
                 isInList = true;
                 foundCard = arrayOfCards.get(k);
                 break;
