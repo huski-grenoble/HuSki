@@ -12,13 +12,13 @@ public class cardStruct implements Parcelable {
 
     public cardStruct(String name){
         this.name = name;
-        this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
+        this.gps = new gpsStruct(0,0,0); //5.7445043 + 10,45.1825309 ,212);
     }
 
     public cardStruct(String name, String chipId,int rssi){
         this.name = name;
         this.chipId = chipId;
-        this.gps = new gpsStruct(0,90,200); //5.7445043 + 10,45.1825309 ,212);
+        this.gps = new gpsStruct(0,0,0); //5.7445043 + 10,45.1825309 ,212);
         this.RSSI = rssi;
     }
 

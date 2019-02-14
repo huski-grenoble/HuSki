@@ -52,8 +52,7 @@ public class Peripherique extends Thread {
             socket = null;
         }
 
-        if (socket != null)
-            tReception = new TReception(handler);
+
     }
 
     public String getNom() {
@@ -92,7 +91,8 @@ public class Peripherique extends Thread {
                     msg.arg1 = CODE_CONNEXION;
                     handler.sendMessage(msg);
 
-                    tReception.handlerUI = handler;
+                    if (fallbackSocket != null)
+                        tReception = new TReception(handler);
                     tReception.start();
 
                 } catch (IOException e) {
@@ -164,7 +164,7 @@ public class Peripherique extends Thread {
                             Log.d("In TRECEPTION", "data received: " + data);
 
                             Message msg = Message.obtain();
-                            msg.what = Peripherique.CODE_RECEPTION;
+                            msg.arg1 = Peripherique.CODE_RECEPTION;
                             msg.obj = data;
                             handlerUI.sendMessage(msg);
                         }

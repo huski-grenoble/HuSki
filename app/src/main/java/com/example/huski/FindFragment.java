@@ -25,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
@@ -49,15 +50,17 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     double currentLon, currentLat, currentAlt;
     int currentDistance;
     TextView tvDist, tvCardName, tvCardUuid;
-    private boolean displayGif = true;
+    private boolean displayGif = false;
     private cardStruct currentCard;
-
+    static final int MIN_RSSI = 50;
+    static final int MAX_RSSI = 106;
+    static final int DISTANCE_RSSI = 2000;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
-    public static FindFragment newInstance() {
+    /*public static FindFragment newInstance() {
         return (new FindFragment(new cardStruct("test")));
-    }
+    }*/
 
     @SuppressLint("ValidFragment")
     public FindFragment(cardStruct currentCard){
@@ -175,10 +178,17 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             gpsStruct p2 = currentCard.getGps();
             currentDistance = (int) p1.distance(p2);
             float degree = 360 + (p1.getAngle(p2) + Math.round(event.values[0])) % 360;
-            int lvlToDraw = (int) degree % 8;
+            int lvlToDraw;
+            if(currentCard.getRSSI() > MAX_RSSI){
+                lvlToDraw = 0;
+            }
+            else {
+                int D = MAX_RSSI - MIN_RSSI;
+                lvlToDraw = (int) (MAX_RSSI - currentCard.getRSSI())%(D/8);
+            }
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
-            if(displayGif == true) {
+            if(!displayGif) {
                 tvDist.setText("Approximate distance: " + currentDistance + "m");
                 // create a rotation animation (reverse turn degree degrees)
                 RotateAnimation ra = new RotateAnimation(
@@ -254,14 +264,16 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
         gpsStruct p2 = currentCard.getGps();
         currentDistance = (int) p1.distance(p2);
-        if(currentDistance <= 2000 & displayGif){
+        if(currentDistance <= DISTANCE_RSSI & !displayGif){
             imageArrow.setImageResource(R.drawable.huskysearching);
             tvDist.setText("The ski is very close to you! Please refer to the following indicator to find it.");
-            displayGif = false;
-        }
-        else if(currentDistance > 2000){
-            imageArrow.setImageResource(R.drawable.arrowski);
             displayGif = true;
+            ListFragment.sendFromList(currentCard.getChipId()+"1");
+            //periph.envoyer(currentCard.getChipId() + "1");
+        }
+        else if(currentDistance > DISTANCE_RSSI){
+            imageArrow.setImageResource(R.drawable.arrowski);
+            displayGif = false;
         }
     }
 
@@ -279,7 +291,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     public void onProviderDisabled(String provider) {
 
     }
-
 
 
 }

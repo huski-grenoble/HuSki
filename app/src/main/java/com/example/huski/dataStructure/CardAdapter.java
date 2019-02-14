@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.huski.FindFragment;
 import com.example.huski.ListFragment;
 import com.example.huski.MainActivity;
+import com.example.huski.Peripherique;
 import com.example.huski.R;
 
 import java.io.BufferedReader;
