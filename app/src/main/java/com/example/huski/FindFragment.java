@@ -38,6 +38,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     // define the display assembly compass picture
     private ImageView imageArrow;
     private ImageView imageIntensity;
+    TextView tvDist, tvCardName, tvCardUuid;
 
     // record the compass picture angle turned
     private float currentDegree = 0f;
@@ -49,12 +50,11 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     LocationManager locationManager;
     double currentLon, currentLat, currentAlt;
     int currentDistance;
-    TextView tvDist, tvCardName, tvCardUuid;
     private boolean displayGif = false;
     private cardStruct currentCard;
     static final int MIN_RSSI = 50;
     static final int MAX_RSSI = 106;
-    static final int DISTANCE_RSSI = 2000;
+    static final int DISTANCE_RSSI = 20;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
@@ -159,7 +159,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        //
         imageArrow = (ImageView) view.findViewById(R.id.imageViewCompass);
         imageIntensity = (ImageView) view.findViewById(R.id.SignalIntensity);
         // TextView that will tell the user what degree is he heading
@@ -331,7 +330,8 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     @Override
     public void onPause(){
         super.onPause();
-        ListFragment.periph.envoyer(currentCard.getChipId() + "0");
+        if(ListFragment.isConnectedToGW)
+            ListFragment.periph.envoyer(currentCard.getChipId() + "0");
     }
 
 

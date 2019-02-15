@@ -41,7 +41,7 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewCompass"
         android:layout_width="258dp"
         android:layout_height="337dp"
