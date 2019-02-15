@@ -71,6 +71,10 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    /**
+     * checks if the location permissions are enabled
+     * @return true if the permissions are enabled
+     */
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(getContext(),
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -111,6 +115,12 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         }
     }
 
+    /**
+     * Requests the location permissions
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -168,23 +178,46 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         mSensorManager.registerListener(this, mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION), SensorManager.SENSOR_DELAY_GAME);
     }
 
+    /**
+     * Is called when the device is moved, calculates the angle between the user, the ski and the lat axis.
+     * Sets the animation for the compass and recalculates the distance between the 2 gps points
+     *
+     * @param event the event of the sensor
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (getActivity() != null && getView() != null) {
             // get the angle around the z-axis rotated
-            //float degree = Math.round(event.values[0]);
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
-            //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
             gpsStruct p2 = currentCard.getGps();
             currentDistance = (int) p1.distance(p2);
             float degree = 360 + (p1.getAngle(p2) + Math.round(event.values[0])) % 360;
             int lvlToDraw;
+            int D = MAX_RSSI - MIN_RSSI;
+            //Defines the rssi lvl to draw on the ui
             if(currentCard.getRSSI() > MAX_RSSI){
                 lvlToDraw = 0;
             }
+            else if(D-D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI){
+                lvlToDraw = 1;
+            }
+            else if(D-2*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-D/7){
+                lvlToDraw = 2;
+            }
+            else if(D-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-2*D/7){
+                lvlToDraw = 2;
+            }
+            else if(D-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-3*D/7){
+                lvlToDraw = 2;
+            }
+            else if(D-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-4*D/7){
+                lvlToDraw = 2;
+            }
+            else if(D-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-5*D/7){
+                lvlToDraw = 2;
+            }
             else {
-                int D = MAX_RSSI - MIN_RSSI;
-                lvlToDraw = (int) (MAX_RSSI - currentCard.getRSSI())%(D/8);
+                lvlToDraw = 7;
             }
             String lvl = "lvl" + lvlToDraw;
             imageIntensity.setImageResource(getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
@@ -256,12 +289,16 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         mIntent = mFrgAct.getIntent();
     }
 
+    /**
+     * Is called when the device location changes, resets the user position and calculates the distance
+     *
+     * @param location the new location of the device
+     */
     @Override
     public void onLocationChanged(Location location) {
         currentLat = location.getLatitude();
         currentLon = location.getLongitude();
         gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
-        //gpsStruct p2 = new gpsStruct(currentLon + 10, currentLat +10, currentAlt); //0 90 north pole
         gpsStruct p2 = currentCard.getGps();
         currentDistance = (int) p1.distance(p2);
         if(currentDistance <= DISTANCE_RSSI & !displayGif){
@@ -269,7 +306,6 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             tvDist.setText("The ski is very close to you! Please refer to the following indicator to find it.");
             displayGif = true;
             ListFragment.sendFromList(currentCard.getChipId()+"1");
-            //periph.envoyer(currentCard.getChipId() + "1");
         }
         else if(currentDistance > DISTANCE_RSSI){
             imageArrow.setImageResource(R.drawable.arrowski);
@@ -290,6 +326,12 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     @Override
     public void onProviderDisabled(String provider) {
 
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        ListFragment.periph.envoyer(currentCard.getChipId() + "0");
     }
 
 

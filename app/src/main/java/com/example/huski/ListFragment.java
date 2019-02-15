@@ -65,8 +65,10 @@ public class ListFragment extends Fragment {
     public static CardAdapter adapter;
     ListView cardList;
     BluetoothAdapter mBluetoothAdapter;
-    static Peripherique periph;
+    public static Peripherique periph;
     public int batteryGW = 0;
+    public static Boolean isConnectedToGW = false;
+    public BluetoothDevice bDevice;
 
     public static ListFragment newInstance() {
         return (new ListFragment());
@@ -88,6 +90,7 @@ public class ListFragment extends Fragment {
            if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
                 newCard();
+                setArguments(null);
             }
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
@@ -216,21 +219,20 @@ public class ListFragment extends Fragment {
     protected void bluetoothOn() {
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         String deviceName = "";
-        BluetoothDevice bDevice = null;
         if (pairedDevices.size() > 0) {
             boolean isPaired = false;
             for (BluetoothDevice d : pairedDevices) {
                 if (d.getBondState() == BluetoothDevice.BOND_BONDED) {
                     isPaired = true;
                     deviceName = d.getName();
-                    bDevice = d;
+                    this.bDevice = d;
                 }
             }
             if (isPaired == true) {
-                connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
+                connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 connectionBtn.setTextColor(Color.WHITE);
-                connectionBtn.setText("Status : connected to " + deviceName);
-                periph = new Peripherique(bDevice, mHandler);
+                connectionBtn.setText("Status : Paired with " + deviceName);
+                periph = new Peripherique(this.bDevice, mHandler);
                 periph.connecter();
             } else {
                 connectionBtn.setText("No device found");
@@ -273,6 +275,9 @@ public class ListFragment extends Fragment {
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
         connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
+        if(periph != null){
+            periph.deconnecter();
+        }
     }
 
     //Bluetooth listener
@@ -302,6 +307,9 @@ public class ListFragment extends Fragment {
 
     public void writeData(cardStruct card){
         try {
+            if(isConnectedToGW) {
+                periph.envoyer(card.getChipId() + "2");
+            }
             // Creates a file in the primary external storage space of the
             // current application.
             // If the file does not exists, it is created.
@@ -371,11 +379,13 @@ public class ListFragment extends Fragment {
             switch(msg.arg1){
                 case Peripherique.CODE_CONNEXION:
                     Log.d("Handler", "connected to " + msg.getData().toString());
-                    connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+                    connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
                     connectionBtn.setTextColor(Color.WHITE);
-                    connectionBtn.setText("Status : socket opened");
+                    connectionBtn.setText("Status : connection opened with " + bDevice.getName());
+                    isConnectedToGW = true;
                     break;
                 case Peripherique.CODE_DECONNEXION:
+                    isConnectedToGW = false;
                     Log.d("Handler", "Disconnected");
                     break;
                 case Peripherique.CODE_RECEPTION:
@@ -419,6 +429,8 @@ public class ListFragment extends Fragment {
     }
 
     public static void sendFromList(String data){
-        periph.envoyer(data);
+        if(isConnectedToGW) {
+            periph.envoyer(data);
+        }
     }
 }

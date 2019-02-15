@@ -3,6 +3,9 @@ package com.example.huski.dataStructure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+/**
+ * The structure that's going to describe the cards
+ */
 public class cardStruct implements Parcelable {
     private String name;
     private String chipId;

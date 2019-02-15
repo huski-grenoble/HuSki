@@ -1,5 +1,8 @@
 package com.example.huski.dataStructure;
 
+/**
+ * The structure that's describing the gps infos of the components
+ */
 public class gpsStruct {
     private double lon;
     private double lat;
@@ -35,25 +38,30 @@ public class gpsStruct {
         this.alt = alt;
     }
 
+    /**
+     * Calculates the angle between the ski, the user and the lat axis
+     * @param target the ski to localise
+     * @return the angle describe above
+     */
     public float getAngle(gpsStruct target){
         double lat2 = target.getLat();
         double lon2 = target.getLon();
         double dy = lat2 -this.lat;
         double dx = lon2 - this.lon;
-        if(dy == 0 && dx == 0){
+        if(dy == 0 && dx == 0){ // if the lat and long are the same as the user's position we chose to point towards north
             return 0;
         }
         if(dy == 0 && lon2 > this.lon){
-            return 90;
+            return 90; //east
         }
         else if(dy == 0 && lon2 <= this.lon){
-            return -90;
+            return -90; //west
         }
         if(dx == 0 && lat2 > this.lat){
-            return 0;
+            return 0; //north
         }
         else if(dx == 0 && lat2 <= this.lat){
-            return 180;
+            return 180; //south
         }
         double y = Math.sin(Math.toRadians(dy)) * Math.cos(Math.toRadians(lon2));
         double x = Math.cos(Math.toRadians(this.lon)) * Math.sin(Math.toRadians(lon2)) -
@@ -62,6 +70,11 @@ public class gpsStruct {
         return (float) -angle;
     }
 
+    /**
+     * Calculates the distance between 2 gps points
+     * @param p2 the point to calculate the distance to
+     * @return the distance in meters
+     */
     public double distance(gpsStruct p2) {
         double lat2 = p2.getLat();
         double lon2 = p2.getLon();

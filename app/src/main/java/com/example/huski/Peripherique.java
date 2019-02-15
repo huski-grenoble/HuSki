@@ -29,7 +29,12 @@ public class Peripherique extends Thread {
     public final static int CODE_DECONNEXION = 2;
     public final static int SIZE_BUFFER = 75; //72 max, margin 3
 
-
+    /**
+     * Object that is used to open a socket between the application and the gateway to communicate
+     *
+     * @param device the device to connect to
+     * @param handler the handler that handles the messages received by the Peripherique
+     */
     public Peripherique(BluetoothDevice device, Handler handler) {
         if (device != null) {
             this.device = device;
@@ -71,6 +76,9 @@ public class Peripherique extends Thread {
         return "\nNom : " + nom + "\nAdresse : " + adresse;
     }
 
+    /**
+     * Opens the socket and sends a CODE_CONNEXION message to the handler
+     */
     public void connecter() {
         new Thread() {
             @Override
@@ -110,6 +118,10 @@ public class Peripherique extends Thread {
         }.start();
     }
 
+    /**
+     * closes the socket between the app and the gateway
+     * @return true if the deconnection was successfull
+     */
     public boolean deconnecter() {
         try {
             tReception.arreter();
@@ -125,6 +137,10 @@ public class Peripherique extends Thread {
         }
     }
 
+    /**
+     * Sends the data through the socket
+     * @param data the data to send
+     */
     public void envoyer(String data) {
         if (socket == null)
             return;
@@ -138,6 +154,9 @@ public class Peripherique extends Thread {
         }
     }
 
+    /**
+     * The thread that's going to listen to the gateway and send the received messages to the handler
+     */
     public class TReception extends Thread {
         Handler handlerUI;
         private boolean fini;
@@ -147,6 +166,9 @@ public class Peripherique extends Thread {
             fini = false;
         }
 
+        /**
+         * Listens to the socket and sends the messages received
+         */
         @Override
         public void run() {
             while (!fini) {
@@ -181,6 +203,9 @@ public class Peripherique extends Thread {
             }
         }
 
+        /**
+         * Stops the listening
+         */
         public void arreter() {
             if (fini == false) {
                 fini = true;

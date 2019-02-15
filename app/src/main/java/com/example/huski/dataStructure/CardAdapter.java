@@ -3,6 +3,7 @@ package com.example.huski.dataStructure;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.media.MediaScannerConnection;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +21,6 @@ import android.widget.Toast;
 import com.example.huski.FindFragment;
 import com.example.huski.ListFragment;
 import com.example.huski.MainActivity;
-import com.example.huski.Peripherique;
 import com.example.huski.R;
 
 import java.io.BufferedReader;
@@ -59,7 +59,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         // Link to XML
         imBatterySki = convertView.findViewById(R.id.batterySkiLvl);
         cardName = convertView.findViewById(R.id.cardName);
-        chipId = convertView.findViewById(R.id.cheapId);
+        chipId = convertView.findViewById(R.id.chipId);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
         String lvl = "battery" + card.getBatteryLvl();
@@ -85,6 +85,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 ListFragment.adapter.notifyDataSetInvalidated();
                 try {
                     deleteData(card);
+                    ListFragment.periph.envoyer(card.getChipId() + "3");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -113,9 +114,15 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 dialog.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            deleteData(card);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                         card.setName(renameInput.getText().toString());
                         Toast.makeText(activity, "change"+card.getName(), Toast.LENGTH_SHORT).show();
                         cardName.setText(card.getName());
+                        writeData(card);
                         ListFragment.adapter.notifyDataSetChanged();
                     }
                 });
@@ -182,4 +189,35 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         writer.flush();
         writer.close();
     }
+
+    public void writeData(cardStruct card){
+        try {
+            if(ListFragment.isConnectedToGW) {
+                ListFragment.periph.envoyer(card.getChipId() + "2");
+            }
+            // Creates a file in the primary external storage space of the
+            // current application.
+            // If the file does not exists, it is created.
+            File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
+            if (!testFile.exists())
+                testFile.createNewFile();
+
+            // Adds a line to the file
+            BufferedWriter writer = new BufferedWriter(new FileWriter(testFile, true /*append*/));
+            writer.write(card.getName() + "♥" + card.getChipId().toString());
+            writer.newLine();
+            writer.close();
+            // Refresh the data so it can seen when the device is plugged in a
+            // computer. You may have to unplug and replug the device to see the
+            // latest changes. This is not necessary if the user should not modify
+            // the files.
+            MediaScannerConnection.scanFile(getContext(),
+                    new String[]{testFile.toString()},
+                    null,
+                    null);
+        } catch (IOException e) {
+            Log.e("ReadWriteFile", "Unable to write to the CardsSaved.txt file.");
+        }
+    }
+
 }
