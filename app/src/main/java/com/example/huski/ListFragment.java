@@ -56,7 +56,7 @@ public class ListFragment extends Fragment {
     private static final String TAG = "debugging";
     private static Bundle savedState;
     Button connectionBtn;
-    FloatingActionButton addBtn, testBtn;
+    FloatingActionButton addBtn;
     AlertDialog.Builder popupAddSki;
     ImageView imBatterySki;
     ImageView imBatteryGW;
