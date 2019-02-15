@@ -1,18 +1,12 @@
 package com.example.huski;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.nfc.tech.NfcBarcode;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.LayoutInflater;
-import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AccelerateInterpolator;
 import android.widget.Toast;
 
 import com.google.android.gms.vision.barcode.Barcode;
@@ -45,7 +39,10 @@ public class AddFragment extends Fragment implements BarcodeReader.BarcodeReader
         return v;
     }
 
-
+    /**
+     * get the barecord scanned and go back to ListFragment to display the list with the new scanned card
+     * @param barcode barcode scanned by the user
+     */
     @Override
     public void onScanned(final Barcode barcode) {
         ListFragment frag =(ListFragment) getActivity().getSupportFragmentManager().findFragmentByTag(fragmentClass);

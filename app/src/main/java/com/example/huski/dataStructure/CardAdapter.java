@@ -142,6 +142,11 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         return convertView;
     }
 
+    /**
+     * Deletes card and update cardList according so
+     * @param card card to delete
+     * @throws IOException
+     */
     public void deleteData(cardStruct card) throws IOException {
         int i = 0;
         String textFromFile = "";
@@ -173,6 +178,12 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         }
     }
 
+    /**
+     * Deletes the specified line of the specified file
+     * @param file file you update
+     * @param lineIndex index of the line you want to remove
+     * @throws IOException
+     */
     public void removeLine(final File file, final int lineIndex) throws IOException {
         final List<String> lines = new LinkedList<>();
         final Scanner reader = new Scanner(new FileInputStream(file), "UTF-8");

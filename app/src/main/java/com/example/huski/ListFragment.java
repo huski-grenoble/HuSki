@@ -91,6 +91,7 @@ public class ListFragment extends Fragment {
                 barcodeString = getArguments().getString("uuidCard");
                 newCard();
                 setArguments(null);
+                Log.d(TAG,"arguments:"+getArguments());
             }
             adapter = new CardAdapter(getActivity(),arrayOfCards);
             adapter.notifyDataSetChanged();
@@ -131,12 +132,6 @@ public class ListFragment extends Fragment {
             }
         });
 
-/*        testBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                periph.envoyer("E0AC55A4AE301");
-            }
-        });*/
 
         //Open Bluetooth settings
         connectionBtn.setOnClickListener(new View.OnClickListener() {
@@ -171,7 +166,10 @@ public class ListFragment extends Fragment {
         return v;
     }
 
-    //Called when barecode has been received : create a new card.
+    /**
+     * Creates a new card in the list with a popup
+     * Allow user to name the card
+     */
     public void newCard() {
         final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup_add_ski, null);
         final cardStruct newCard = new cardStruct(barcodeString,barcodeString,0);
@@ -201,7 +199,10 @@ public class ListFragment extends Fragment {
         popupAddSki.show();
     }
 
-
+    /**
+     * Instance of bluetooth listener
+     * @param savedInstanceState
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -215,7 +216,12 @@ public class ListFragment extends Fragment {
     public void onSaveInstanceState(Bundle savedInstanceState) {
         super.onSaveInstanceState(savedInstanceState);
     }
-    //Check bluetooth devices which are available
+
+    /**
+     * Checks which bluetooth devices are available
+     * Changes design if any device is connected to the mobile
+     * Starts connection with gateway ( instance of bluetooth periph)
+     */
     protected void bluetoothOn() {
         Set<BluetoothDevice> pairedDevices = BluetoothAdapter.getDefaultAdapter().getBondedDevices();
         String deviceName = "";
@@ -269,8 +275,10 @@ public class ListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
     }
 
-    //Called when bluetooth if off
-
+    /**
+     * Called when bluetooth is turned off
+     * Changes design of bluetooth button
+     */
     private void bluetoothOff(){
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
@@ -281,6 +289,10 @@ public class ListFragment extends Fragment {
     }
 
     //Bluetooth listener
+    /**
+     * Blueooth listener checks state of bluetooth
+     * Trigger appropriate function
+     */
     private final BroadcastReceiver mBroadcastReceiver1 = new BroadcastReceiver() {
 
         @Override
@@ -300,11 +312,14 @@ public class ListFragment extends Fragment {
                     case BluetoothAdapter.STATE_TURNING_ON:
                         break;
                 }
-
             }
         }
     };
 
+    /**
+     * Saves data (ski card) into a local file of the app to allow restoration
+     * @param card the card to save
+     */
     public void writeData(cardStruct card){
         try {
             if(isConnectedToGW) {
@@ -335,6 +350,9 @@ public class ListFragment extends Fragment {
         }
     }
 
+    /**
+     * Restores data from the local file to update cardList
+     */
     public void readData(){
         String textFromFile = "";
         // Gets the file from the primary internal storage space of the
@@ -368,10 +386,17 @@ public class ListFragment extends Fragment {
         }
     }
 
+    /**
+     * Refreshes fragment on vertical swipe
+     */
     private void onCompletion(){
         mySwipeRefreshLayout.setRefreshing(false);
     }
 
+    /**
+     * Handles message send by the bluetooth periph
+     *
+     */
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         @Override
@@ -389,6 +414,7 @@ public class ListFragment extends Fragment {
                     Log.d("Handler", "Disconnected");
                     break;
                 case Peripherique.CODE_RECEPTION:
+                    //Parse data received
                     Log.d("Handler", "Message received : " + msg.getData().toString());
                     parseData(msg.obj.toString());
                     break;
@@ -396,6 +422,10 @@ public class ListFragment extends Fragment {
         }
     };
 
+    /**
+     * Parses data received and updates the current card according so
+     * @param msg the message received
+     */
     public void parseData(String msg){
         String data[] = msg.split(" ", 7);
         Boolean isInList = false;
