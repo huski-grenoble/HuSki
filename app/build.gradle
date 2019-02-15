@@ -20,7 +20,7 @@ android {
 
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco-android'
+apply plugin: 'jacoco'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
