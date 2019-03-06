@@ -25,7 +25,6 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
@@ -35,6 +34,7 @@ import static android.content.Context.SENSOR_SERVICE;
 
 
 public class FindFragment extends Fragment implements SensorEventListener, LocationListener {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     // define the display assembly compass picture
     private ImageView imageArrow;
     private ImageView imageIntensity;
@@ -69,7 +69,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     public FindFragment(){}
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
     /**
      * checks if the location permissions are enabled
@@ -139,15 +139,11 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                         //Request location updates:
                         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 400, 1, this);
                     }
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
-                return;
+                break;
             }
+            default:
+                break;
 
         }
     }

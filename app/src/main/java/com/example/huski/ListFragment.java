@@ -85,7 +85,6 @@ public class ListFragment extends Fragment {
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
-            FragmentManager fm = getFragmentManager();
             //If  barecode has been scanned
            if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
@@ -366,7 +365,7 @@ public class ListFragment extends Fragment {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    textFromFile = line.toString();
+                    textFromFile = line;
                     String arr[] = textFromFile.split("♥", 2);
                     final cardStruct newCard = new cardStruct(arr[0], arr[1], 0);
                     boolean bool = false;

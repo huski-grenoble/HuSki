@@ -19,7 +19,6 @@ import info.androidhive.barcode.BarcodeReader;
 public class AddFragment extends Fragment implements BarcodeReader.BarcodeReaderListener {
 
     private BarcodeReader barcodeReader;
-    private static final String TAG = "debugging";
     private final String fragmentClass = "class com.example.huski.ListFragment";
 
     public static AddFragment newInstance() {
