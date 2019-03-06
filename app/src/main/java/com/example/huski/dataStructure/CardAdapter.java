@@ -140,6 +140,8 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
             }
         });
 
+
+
         // Return the completed view to render on screen
         return convertView;
     }
@@ -156,7 +158,6 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         // current application.
         File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
         if (testFile != null) {
-            StringBuilder stringBuilder = new StringBuilder();
             // Reads the data from the file
             BufferedReader reader = null;
             try {
@@ -164,7 +165,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    textFromFile = line.toString();
+                    textFromFile = line;
                     String arr[] = textFromFile.split("♥", 2);
                     Log.d("SavedData", arr[1] + " " + card.getChipId().toString());
                     if(arr[1].equals(card.getChipId().toString())){

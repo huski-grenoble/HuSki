@@ -55,16 +55,15 @@ public class ListFragment extends Fragment {
     private static final String STATE_LIST = "State Adapter Data";
     private static final String TAG = "debugging";
     private static Bundle savedState;
-    Button connectionBtn;
-    FloatingActionButton addBtn;
-    AlertDialog.Builder popupAddSki;
-    ImageView imBatterySki;
-    ImageView imBatteryGW;
-    SwipeRefreshLayout mySwipeRefreshLayout;
+    private Button connectionBtn;
+    private FloatingActionButton addBtn;
+    private AlertDialog.Builder popupAddSki;
+    private ImageView imBatteryGW,imBatterySki;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
-    ListView cardList;
-    BluetoothAdapter mBluetoothAdapter;
+    private ListView cardList;
+    private BluetoothAdapter mBluetoothAdapter;
     public static Peripherique periph;
     public int batteryGW = 0;
     public static Boolean isConnectedToGW = false;
@@ -85,7 +84,6 @@ public class ListFragment extends Fragment {
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
-            FragmentManager fm = getFragmentManager();
             //If  barecode has been scanned
            if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
@@ -375,7 +373,7 @@ public class ListFragment extends Fragment {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    textFromFile = line.toString();
+                    textFromFile = line;
                     String arr[] = textFromFile.split("♥", 2);
                     final cardStruct newCard = new cardStruct(arr[0], arr[1], 0);
                     boolean bool = false;

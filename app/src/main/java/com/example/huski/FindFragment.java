@@ -26,7 +26,6 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
@@ -36,11 +35,10 @@ import static android.content.Context.SENSOR_SERVICE;
 
 
 public class FindFragment extends Fragment implements SensorEventListener, LocationListener {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     // define the display assembly compass picture
     private ImageView imageArrow;
     private ImageView imageIntensity;
-    TextView tvDist, tvCardName, tvCardUuid;
-
     // record the compass picture angle turned
     private float currentDegree = 0f;
 
@@ -48,14 +46,15 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     private SensorManager mSensorManager;
 
     // Manager for gps localisation
-    LocationManager locationManager;
-    double currentLon, currentLat, currentAlt;
+    private LocationManager locationManager;
+    private double currentLon, currentLat, currentAlt;
     int currentDistance;
+    private TextView tvDist, tvCardName, tvCardUuid;
     private boolean displayGif = false;
     private cardStruct currentCard;
-    static final int MIN_RSSI = 90;
-    static final int MAX_RSSI = 130;
-    static final int DISTANCE_RSSI = 20;
+    private static final int MIN_RSSI = 90;
+    private static final int MAX_RSSI = 130;
+    private static final int DISTANCE_RSSI = 20;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
@@ -70,7 +69,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     public FindFragment(){}
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
     /**
      * checks if the location permissions are enabled
@@ -140,9 +139,11 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                         //Request location updates:
                         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 400, 1, this);
                     }
-
                 }
+                break;
             }
+            default:
+                break;
 
         }
     }
