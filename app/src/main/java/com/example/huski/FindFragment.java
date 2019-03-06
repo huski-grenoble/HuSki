@@ -46,15 +46,15 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     private SensorManager mSensorManager;
 
     // Manager for gps localisation
-    LocationManager locationManager;
-    double currentLon, currentLat, currentAlt;
+    private LocationManager locationManager;
+    private double currentLon, currentLat, currentAlt;
     int currentDistance;
-    TextView tvDist, tvCardName, tvCardUuid;
+    private TextView tvDist, tvCardName, tvCardUuid;
     private boolean displayGif = false;
     private cardStruct currentCard;
-    static final int MIN_RSSI = 50;
-    static final int MAX_RSSI = 106;
-    static final int DISTANCE_RSSI = 2000;
+    private static final int MIN_RSSI = 50;
+    private static final int MAX_RSSI = 106;
+    private static final int DISTANCE_RSSI = 2000;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
