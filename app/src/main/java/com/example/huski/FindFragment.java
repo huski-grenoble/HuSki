@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,8 +53,8 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     int currentDistance;
     private boolean displayGif = false;
     private cardStruct currentCard;
-    static final int MIN_RSSI = 50;
-    static final int MAX_RSSI = 106;
+    static final int MIN_RSSI = 90;
+    static final int MAX_RSSI = 130;
     static final int DISTANCE_RSSI = 20;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
@@ -140,13 +141,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 400, 1, this);
                     }
 
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
-                return;
             }
 
         }
@@ -197,22 +192,22 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             if(currentCard.getRSSI() > MAX_RSSI){
                 lvlToDraw = 0;
             }
-            else if(D-D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI){
+            else if(MAX_RSSI-D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI){
                 lvlToDraw = 1;
             }
-            else if(D-2*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-D/7){
+            else if(MAX_RSSI-2*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-D/7){
                 lvlToDraw = 2;
             }
-            else if(D-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-2*D/7){
+            else if(MAX_RSSI-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-2*D/7){
                 lvlToDraw = 2;
             }
-            else if(D-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-3*D/7){
+            else if(MAX_RSSI-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-3*D/7){
                 lvlToDraw = 2;
             }
-            else if(D-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-4*D/7){
+            else if(MAX_RSSI-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-4*D/7){
                 lvlToDraw = 2;
             }
-            else if(D-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-5*D/7){
+            else if(MAX_RSSI-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-5*D/7){
                 lvlToDraw = 2;
             }
             else {
@@ -272,7 +267,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) this.getActivity().getSystemService(SENSOR_SERVICE);
         locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
-        checkLocationPermission();
+        if(!checkLocationPermission()){
+            return;
+        }
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         while(myLocation == null){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
