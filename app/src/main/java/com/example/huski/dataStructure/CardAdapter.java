@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.example.huski.FindFragment;
 import com.example.huski.ListFragment;
 import com.example.huski.MainActivity;
-import com.example.huski.Peripherique;
 import com.example.huski.R;
 
 import java.io.BufferedReader;
@@ -73,6 +72,9 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
             animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
             imBatterySki.startAnimation(animation); //to start animation
         }
+        else{
+            imBatterySki.clearAnimation();
+        }
 
         // set cardName
         cardName.setText(card.getName());
@@ -86,7 +88,9 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 ListFragment.adapter.notifyDataSetInvalidated();
                 try {
                     deleteData(card);
-                    ListFragment.periph.envoyer(card.getChipId() + "3");
+                    if(ListFragment.periph != null) {
+                        ListFragment.periph.envoyer(card.getChipId() + "3");
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -97,7 +101,9 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
             @Override
             public void onClick(View v) {
-                ListFragment.periph.envoyer(card.getChipId()+"1");
+                if(ListFragment.periph != null) {
+                    ListFragment.periph.envoyer(card.getChipId() + "1");
+                }
                 ((MainActivity) getContext()).startTransactionFragment(new FindFragment(card));
             }
         });
@@ -206,7 +212,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
     public void writeData(cardStruct card){
         try {
-            if(ListFragment.isConnectedToGW) {
+            if(ListFragment.isConnectedToGW && ListFragment.periph != null) {
                 ListFragment.periph.envoyer(card.getChipId() + "2");
             }
             // Creates a file in the primary external storage space of the

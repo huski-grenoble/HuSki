@@ -3,6 +3,8 @@ package com.example.huski.dataStructure;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.Date;
+
 /**
  * The structure that's going to describe the cards
  */
@@ -12,6 +14,9 @@ public class cardStruct implements Parcelable {
     private gpsStruct gps;
     private int RSSI;
     private int batteryLvl = 0;
+    private String lastPackage = "";
+    private Date receivedAt;
+
 
     public cardStruct(String name){
         this.name = name;
@@ -82,4 +87,21 @@ public class cardStruct implements Parcelable {
     public String getChipId() {
         return chipId;
     }
+
+    public String getLastPackage() {
+        return lastPackage;
+    }
+
+    public void setLastPackage(String lastPackage) {
+        this.lastPackage = lastPackage;
+    }
+
+    public Date getReceivedAt() {
+        return receivedAt;
+    }
+
+    public void setReceivedAt(Date receivedAt) {
+        this.receivedAt = receivedAt;
+    }
+
 }

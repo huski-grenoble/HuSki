@@ -44,7 +44,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Set;
 
 
@@ -329,7 +332,7 @@ public class ListFragment extends Fragment {
      */
     public void writeData(cardStruct card){
         try {
-            if(isConnectedToGW) {
+            if(isConnectedToGW && periph != null) {
                 periph.envoyer(card.getChipId() + "2");
             }
             // Creates a file in the primary external storage space of the
@@ -464,11 +467,12 @@ public class ListFragment extends Fragment {
                 imBatteryGW.clearAnimation();
             }
             foundCard.setRSSI(Integer.parseInt(data[6]));
+            foundCard.setReceivedAt(Calendar.getInstance().getTime());
         }
     }
 
     public static void sendFromList(String data){
-        if(isConnectedToGW) {
+        if(isConnectedToGW && periph != null) {
             periph.envoyer(data);
         }
     }

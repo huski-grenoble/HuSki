@@ -26,9 +26,12 @@ import android.view.animation.Animation;
 import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
+
+import java.util.Calendar;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
@@ -49,11 +52,11 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     private LocationManager locationManager;
     private double currentLon, currentLat, currentAlt;
     int currentDistance;
-    private TextView tvDist, tvCardName, tvCardUuid;
+    private TextView tvDist, tvCardName, tvCardUuid, tvLastPackage;
     private boolean displayGif = false;
     private cardStruct currentCard;
-    private static final int MIN_RSSI = 90;
-    private static final int MAX_RSSI = 130;
+    private static final int MIN_RSSI = 100;
+    private static final int MAX_RSSI = 125;
     private static final int DISTANCE_RSSI = 20;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
@@ -150,6 +153,20 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View view = factory.inflate(R.layout.calibration, null);
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(getContext()).
+                        setMessage("Please calibrate your compass as follows for 5 seconds").
+                        setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).
+                        setView(view);
+        builder.create().show();
         return inflater.inflate(R.layout.fragment_find, container, false);
     }
 
@@ -161,6 +178,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         tvCardName = (TextView) view.findViewById(R.id.tvCardName);
         tvCardUuid = (TextView) view.findViewById(R.id.tvCardUuid);
         tvDist = (TextView) view.findViewById(R.id.tvDist);
+        tvLastPackage = (TextView) view.findViewById(R.id.tvLastPackage);
         //Set text for which card is tracked
         tvCardName.setText(currentCard.getName());
         tvCardUuid.setText(currentCard.getChipId().toString());
@@ -185,6 +203,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             // get the angle around the z-axis rotated
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
             gpsStruct p2 = currentCard.getGps();
+            //Toast.makeText(getContext(), Double.toString(p1.getLat()) + " " + Double.toString(p1.getLon()) + " "+ Double.toString(p1.getAlt()), Toast.LENGTH_SHORT).show();
             currentDistance = (int) p1.distance(p2);
             float degree = 360 + (p1.getAngle(p2) + Math.round(event.values[0])) % 360;
             int lvlToDraw;
@@ -200,16 +219,16 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                 lvlToDraw = 2;
             }
             else if(MAX_RSSI-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-2*D/7){
-                lvlToDraw = 2;
+                lvlToDraw = 3;
             }
             else if(MAX_RSSI-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-3*D/7){
-                lvlToDraw = 2;
+                lvlToDraw = 4;
             }
             else if(MAX_RSSI-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-4*D/7){
-                lvlToDraw = 2;
+                lvlToDraw = 5;
             }
             else if(MAX_RSSI-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-5*D/7){
-                lvlToDraw = 2;
+                lvlToDraw = 6;
             }
             else {
                 lvlToDraw = 7;
@@ -253,6 +272,10 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
                 // Start the animation
                 imageArrow.startAnimation(ra);
+            }
+            if(currentCard.getReceivedAt() != null) {
+                long seconds = (Calendar.getInstance().getTimeInMillis() - currentCard.getReceivedAt().getTime()) / 1000;
+                tvLastPackage.setText("Last package received " + Long.toString(seconds) + " seconds ago");
             }
         }
     }
@@ -328,7 +351,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     @Override
     public void onPause(){
         super.onPause();
-        if(ListFragment.isConnectedToGW)
+        if(ListFragment.isConnectedToGW && ListFragment.periph != null)
             ListFragment.periph.envoyer(currentCard.getChipId() + "0");
     }
 
