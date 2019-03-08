@@ -292,7 +292,7 @@ public class ListFragment extends Fragment {
     private void bluetoothOff(){
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
-        connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
+        connectionBtn.setText("Click here to enable bluetooth & connect the HuConnect");
         if(periph != null){
             periph.deconnecter();
         }

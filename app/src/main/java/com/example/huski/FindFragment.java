@@ -277,6 +277,9 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                 long seconds = (Calendar.getInstance().getTimeInMillis() - currentCard.getReceivedAt().getTime()) / 1000;
                 tvLastPackage.setText("Last package received " + Long.toString(seconds) + " seconds ago");
             }
+            else{
+                tvLastPackage.setText("No package received, please verify that the HuConnect is paired with your phone and that the HuCard is on");
+            }
         }
     }
 
@@ -299,6 +302,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
             myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
+
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
         currentAlt = myLocation.getAltitude();
