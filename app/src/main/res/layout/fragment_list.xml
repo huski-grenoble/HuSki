@@ -13,9 +13,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/list"
-        android:background="@drawable/style_cardname"
         android:dividerHeight="10dp"
-        android:divider="@android:color/white"
+        android:divider="#00000000"
         />
     <TextView
         android:id="@android:id/empty"
@@ -43,6 +42,7 @@
         android:layout_above="@+id/connectionBtn"
         android:layout_alignParentRight="true"
         android:src="@drawable/baseline_add_circle_black_18dp"
+        android:background="#3883C4"
         />
 
     <TextView
