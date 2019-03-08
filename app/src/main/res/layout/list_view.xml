@@ -34,25 +34,40 @@
         android:layout_marginLeft="10dp"
         android:textColor="@android:color/white"/>
 
+    <ImageButton
+        android:id="@+id/renameButton"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginLeft="10dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_rename_box_grey600_48dp"
+        android:layout_below="@+id/chipId"
+        android:layout_alignParentLeft="true"
+        />
+
         <ImageButton
             android:id="@+id/localiseButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:scaleType="fitXY"
             android:src="@drawable/localise"
             android:layout_below="@+id/chipId"
             android:layout_marginLeft="50dp"
             android:layout_marginRight="50dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/style_button"
             />
 
         <ImageButton
             android:id="@+id/deleteButton"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
             android:scaleType="fitXY"
             android:src="@drawable/trash"
             android:layout_below="@+id/chipId"
             android:layout_alignParentRight="true"
+            android:background="@drawable/style_button"
+            android:layout_marginRight="10dp"
             />
 
 

@@ -40,7 +40,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     Activity activity;
     AlertDialog.Builder dialog;
     ImageView imBatterySki;
-    ImageButton localiseBtn,deleteBtn;
+    ImageButton localiseBtn,deleteBtn,renameBtn;
     TextView cardName,chipId;
 
     public CardAdapter(Activity activity, ArrayList<cardStruct> cards){
@@ -62,6 +62,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         chipId = convertView.findViewById(R.id.chipId);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
+        renameBtn =  convertView.findViewById(R.id.renameButton);
         String lvl = "battery" + card.getBatteryLvl();
         imBatterySki.setImageResource(getContext().getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
         if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
@@ -89,6 +90,41 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        renameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup, null);
+                final EditText renameInput = (EditText) view.findViewById(R.id.rename);
+                dialog = new AlertDialog.Builder(getContext());
+                dialog.create();
+                dialog.setTitle("Edit the name");
+
+                dialog.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            deleteData(card);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        card.setName(renameInput.getText().toString());
+                        Toast.makeText(activity, "change"+card.getName(), Toast.LENGTH_SHORT).show();
+                        cardName.setText(card.getName());
+                        writeData(card);
+                        ListFragment.adapter.notifyDataSetChanged();
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.setView(view);
+                dialog.show();
             }
         });
 
