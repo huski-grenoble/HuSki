@@ -8,6 +8,12 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:textSize="30dp"
+        android:textColor="@color/colorPrimary"/>
     <ListView
         android:layout_margin="10dp"
         android:layout_width="wrap_content"
@@ -39,28 +45,50 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
-        android:layout_above="@+id/connectionBtn"
+        android:layout_below="@id/list"
         android:layout_alignParentRight="true"
         android:src="@drawable/baseline_add_circle_black_18dp"
         android:background="#3883C4"
         />
 
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/divider">
+
+
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/gatewayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/connectionBtn"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="10dp"
+        android:text="Gateway :"
+        android:textSize="25dp"
+        android:textColor="@color/colorPrimary"
+        />
     <TextView
         android:id="@android:id/empty"
+        android:layout_margin="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toLeftOf="@id/batteryGWLvl"
+        android:layout_toRightOf="@id/gatewayText"
         android:layout_above="@id/connectionBtn"
-        android:layout_marginBottom="13dp"
-        android:layout_marginRight="10dp"
-        android:textSize="13dp"
-        android:text="Gateway battery level:" />
+        android:layout_centerHorizontal="true"
+        android:textSize="20dp"
+        android:textColor="@color/colorPrimary"
+        android:text="Conntected" />
 
     <ImageView
         android:id="@+id/batteryGWLvl"
         android:layout_width="70dp"
         android:layout_height="35dp"
-        android:layout_marginBottom="5dp"
+        android:layout_margin="10dp"
+        android:layout_alignParentRight="true"
         android:layout_above="@id/connectionBtn"
         android:layout_centerHorizontal="true"
         android:scaleType="fitXY"
