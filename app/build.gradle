@@ -13,14 +13,18 @@ android {
     buildTypes {
         release {
             minifyEnabled false
+            testCoverageEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+        debug{
+            testCoverageEnabled true
         }
     }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco'
+apply plugin: 'jacoco-android'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -36,19 +40,16 @@ dependencies {
     implementation 'com.github.amlcurran.showcaseview:library:5.4.3'
 }
 
-sonarqube {
-    properties {
-        def libraries = project.android.sdkDirectory.getPath() + "/platforms/android-23/android.jar"/* + ", build/intermediates/exploded-aar*//**//*classes.jar"*/
-    property "sonar.sources", "src/main/java"
-    property "sonar.binaries", "build/intermediates/classes/debug"
-    property "sonar.libraries", libraries
-    property "sonar.tests", "src/test/java, src/androidTest/java"
-    property "sonar.java.test.binaries", "build/intermediates/class/debug"
-    property "sonar.java.test.libraries", libraries
-    property "sonar.jacoco.reportPath", "build/jacoco/testDebugUnitTest.exec"
-    property "sonar.java.coveragePlugin", "jacoco"
-    property "sonar.junit.reportsPath", "build/test-results/debug"
-    property "sonar.android.lint.report", "build/outputs/lint-results"
+android.testOptions {
+    unitTests.all {
+        jacoco {
+            includeNoLocationClasses=true
+        }
     }
-    
+}
+
+jacocoAndroidUnitTestReport  {
+    csv.enabled false
+    html.enabled false
+    xml.enabled true
 }
