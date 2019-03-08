@@ -5,13 +5,12 @@ import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.List;
 import java.util.UUID;
 
 public class Peripherique extends Thread {
@@ -24,6 +23,7 @@ public class Peripherique extends Thread {
     private InputStream receiveStream = null;
     private OutputStream sendStream = null;
     private TReception tReception;
+    public static boolean periphconnected = false;
     public final static int CODE_CONNEXION = 0;
     public final static int CODE_RECEPTION = 1;
     public final static int CODE_DECONNEXION = 2;
@@ -77,7 +77,7 @@ public class Peripherique extends Thread {
     }
 
     /**
-     * Opens the socket and sends a CODE_CONNEXION message to the handler
+     * Opens the socket and sends a CODE_CONNEXION message to the handler if successful
      */
     public void connecter() {
         new Thread() {
@@ -102,6 +102,7 @@ public class Peripherique extends Thread {
                     if (fallbackSocket != null)
                         tReception = new TReception(handler);
                     tReception.start();
+                    periphconnected = true;
 
                 } catch (IOException e) {
                     System.out.println("<Socket> error connect");
@@ -129,6 +130,7 @@ public class Peripherique extends Thread {
             deconnexion.arg1 = CODE_DECONNEXION;
             handler.sendMessage(deconnexion);
             socket.close();
+            periphconnected = false;
             return true;
         } catch (IOException e) {
             System.out.println("<Socket> error close");
@@ -143,6 +145,8 @@ public class Peripherique extends Thread {
      */
     public void envoyer(String data) {
         if (socket == null)
+            return;
+        if(!ListFragment.isConnectedToGW)
             return;
 
         try {

@@ -18,6 +18,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,15 +31,17 @@ import android.widget.Toast;
 import com.example.huski.dataStructure.cardStruct;
 import com.example.huski.dataStructure.gpsStruct;
 
+import java.util.Calendar;
+
 import static android.content.Context.LOCATION_SERVICE;
 import static android.content.Context.SENSOR_SERVICE;
 
 
 public class FindFragment extends Fragment implements SensorEventListener, LocationListener {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     // define the display assembly compass picture
     private ImageView imageArrow;
     private ImageView imageIntensity;
-
     // record the compass picture angle turned
     private float currentDegree = 0f;
 
@@ -46,15 +49,15 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     private SensorManager mSensorManager;
 
     // Manager for gps localisation
-    LocationManager locationManager;
-    double currentLon, currentLat, currentAlt;
+    private LocationManager locationManager;
+    private double currentLon, currentLat, currentAlt;
     int currentDistance;
-    TextView tvDist, tvCardName, tvCardUuid;
+    private TextView tvDist, tvCardName, tvCardUuid, tvLastPackage;
     private boolean displayGif = false;
     private cardStruct currentCard;
-    static final int MIN_RSSI = 50;
-    static final int MAX_RSSI = 106;
-    static final int DISTANCE_RSSI = 2000;
+    private static final int MIN_RSSI = 100;
+    private static final int MAX_RSSI = 125;
+    private static final int DISTANCE_RSSI = 20;
     private FragmentActivity mFrgAct;
     private Intent mIntent;
 
@@ -69,7 +72,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
 
     public FindFragment(){}
 
-    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
 
     /**
      * checks if the location permissions are enabled
@@ -139,33 +142,43 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                         //Request location updates:
                         locationManager.requestLocationUpdates(LocationManager.PASSIVE_PROVIDER, 400, 1, this);
                     }
-
-                } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
-                return;
+                break;
             }
+            default:
+                break;
 
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        LayoutInflater factory = LayoutInflater.from(getContext());
+        final View view = factory.inflate(R.layout.calibration, null);
+
+        AlertDialog.Builder builder =
+                new AlertDialog.Builder(getContext()).
+                        setMessage("Please calibrate your compass as follows for 5 seconds").
+                        setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        }).
+                        setView(view);
+        builder.create().show();
         return inflater.inflate(R.layout.fragment_find, container, false);
     }
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        //
         imageArrow = (ImageView) view.findViewById(R.id.imageViewCompass);
         imageIntensity = (ImageView) view.findViewById(R.id.SignalIntensity);
         // TextView that will tell the user what degree is he heading
         tvCardName = (TextView) view.findViewById(R.id.tvCardName);
         tvCardUuid = (TextView) view.findViewById(R.id.tvCardUuid);
         tvDist = (TextView) view.findViewById(R.id.tvDist);
+        tvLastPackage = (TextView) view.findViewById(R.id.tvLastPackage);
         //Set text for which card is tracked
         tvCardName.setText(currentCard.getName());
         tvCardUuid.setText(currentCard.getChipId().toString());
@@ -190,6 +203,7 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             // get the angle around the z-axis rotated
             gpsStruct p1 = new gpsStruct(currentLon, currentLat, currentAlt);
             gpsStruct p2 = currentCard.getGps();
+            //Toast.makeText(getContext(), Double.toString(p1.getLat()) + " " + Double.toString(p1.getLon()) + " "+ Double.toString(p1.getAlt()), Toast.LENGTH_SHORT).show();
             currentDistance = (int) p1.distance(p2);
             float degree = 360 + (p1.getAngle(p2) + Math.round(event.values[0])) % 360;
             int lvlToDraw;
@@ -198,23 +212,23 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
             if(currentCard.getRSSI() > MAX_RSSI){
                 lvlToDraw = 0;
             }
-            else if(D-D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI){
+            else if(MAX_RSSI-D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI){
                 lvlToDraw = 1;
             }
-            else if(D-2*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-D/7){
+            else if(MAX_RSSI-2*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-D/7){
                 lvlToDraw = 2;
             }
-            else if(D-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-2*D/7){
-                lvlToDraw = 2;
+            else if(MAX_RSSI-3*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-2*D/7){
+                lvlToDraw = 3;
             }
-            else if(D-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-3*D/7){
-                lvlToDraw = 2;
+            else if(MAX_RSSI-4*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-3*D/7){
+                lvlToDraw = 4;
             }
-            else if(D-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-4*D/7){
-                lvlToDraw = 2;
+            else if(MAX_RSSI-5*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-4*D/7){
+                lvlToDraw = 5;
             }
-            else if(D-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= D-5*D/7){
-                lvlToDraw = 2;
+            else if(MAX_RSSI-6*D/7 < currentCard.getRSSI() && currentCard.getRSSI() <= MAX_RSSI-5*D/7){
+                lvlToDraw = 6;
             }
             else {
                 lvlToDraw = 7;
@@ -259,6 +273,13 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
                 // Start the animation
                 imageArrow.startAnimation(ra);
             }
+            if(currentCard.getReceivedAt() != null) {
+                long seconds = (Calendar.getInstance().getTimeInMillis() - currentCard.getReceivedAt().getTime()) / 1000;
+                tvLastPackage.setText("Last package received " + Long.toString(seconds) + " seconds ago");
+            }
+            else{
+                tvLastPackage.setText("No package received, please verify that the HuConnect is paired with your phone and that the HuCard is on");
+            }
         }
     }
 
@@ -273,12 +294,15 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
         // initialize your android device sensor capabilities
         mSensorManager = (SensorManager) this.getActivity().getSystemService(SENSOR_SERVICE);
         locationManager = (LocationManager) this.getActivity().getSystemService(LOCATION_SERVICE);
-        checkLocationPermission();
+        if(!checkLocationPermission()){
+            return;
+        }
         Location myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         while(myLocation == null){
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0,this);
             myLocation = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         }
+
         currentLat = myLocation.getLatitude();
         currentLon = myLocation.getLongitude();
         currentAlt = myLocation.getAltitude();
@@ -331,7 +355,8 @@ public class FindFragment extends Fragment implements SensorEventListener, Locat
     @Override
     public void onPause(){
         super.onPause();
-        ListFragment.periph.envoyer(currentCard.getChipId() + "0");
+        if(ListFragment.isConnectedToGW && ListFragment.periph != null)
+            ListFragment.periph.envoyer(currentCard.getChipId() + "0");
     }
 
 

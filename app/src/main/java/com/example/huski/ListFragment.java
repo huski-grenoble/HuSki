@@ -44,7 +44,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Set;
 
 
@@ -55,16 +58,15 @@ public class ListFragment extends Fragment {
     private static final String STATE_LIST = "State Adapter Data";
     private static final String TAG = "debugging";
     private static Bundle savedState;
-    Button connectionBtn;
-    FloatingActionButton addBtn;
-    AlertDialog.Builder popupAddSki;
-    ImageView imBatterySki;
-    ImageView imBatteryGW;
-    SwipeRefreshLayout mySwipeRefreshLayout;
+    private Button connectionBtn;
+    private FloatingActionButton addBtn;
+    private AlertDialog.Builder popupAddSki;
+    private ImageView imBatteryGW,imBatterySki;
+    private SwipeRefreshLayout mySwipeRefreshLayout;
     public static ArrayList<cardStruct> arrayOfCards;
     public static CardAdapter adapter;
-    ListView cardList;
-    BluetoothAdapter mBluetoothAdapter;
+    private ListView cardList;
+    private BluetoothAdapter mBluetoothAdapter;
     public static Peripherique periph;
     public int batteryGW = 0;
     public static Boolean isConnectedToGW = false;
@@ -85,7 +87,6 @@ public class ListFragment extends Fragment {
         }
         else{
             arrayOfCards = savedState.getParcelableArrayList(STATE_LIST);
-            FragmentManager fm = getFragmentManager();
             //If  barecode has been scanned
            if(getArguments()!= null){
                 barcodeString = getArguments().getString("uuidCard");
@@ -154,7 +155,9 @@ public class ListFragment extends Fragment {
 
         //Set list & bluetooth adapter
         cardList.setAdapter(adapter);
-        mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if(mBluetoothAdapter == null) {
+            mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        }
 
         //Check Bluetooth
         if(mBluetoothAdapter.isEnabled()){
@@ -238,8 +241,15 @@ public class ListFragment extends Fragment {
                 connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
                 connectionBtn.setTextColor(Color.WHITE);
                 connectionBtn.setText("Status : Paired with " + deviceName);
+                if(isConnectedToGW){
+                    connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorOK));
+                    connectionBtn.setTextColor(Color.WHITE);
+                    connectionBtn.setText("Status : connection opened with " + bDevice.getName());
+                }
                 periph = new Peripherique(this.bDevice, mHandler);
-                periph.connecter();
+                if(!Peripherique.periphconnected) {
+                    periph.connecter();
+                }
             } else {
                 connectionBtn.setText("No device found");
             }
@@ -282,7 +292,7 @@ public class ListFragment extends Fragment {
     private void bluetoothOff(){
         connectionBtn.setBackgroundColor(getResources().getColor(R.color.colorDanger));
         connectionBtn.setTextColor(Color.WHITE);
-        connectionBtn.setText("Click here to enable bluetooth & connect the gateway");
+        connectionBtn.setText("Click here to enable bluetooth & connect the HuConnect");
         if(periph != null){
             periph.deconnecter();
         }
@@ -322,7 +332,7 @@ public class ListFragment extends Fragment {
      */
     public void writeData(cardStruct card){
         try {
-            if(isConnectedToGW) {
+            if(isConnectedToGW && periph != null) {
                 periph.envoyer(card.getChipId() + "2");
             }
             // Creates a file in the primary external storage space of the
@@ -366,7 +376,7 @@ public class ListFragment extends Fragment {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    textFromFile = line.toString();
+                    textFromFile = line;
                     String arr[] = textFromFile.split("♥", 2);
                     final cardStruct newCard = new cardStruct(arr[0], arr[1], 0);
                     boolean bool = false;
@@ -440,6 +450,8 @@ public class ListFragment extends Fragment {
         if(isInList && data.length == 7){
             foundCard.setGps(new gpsStruct(Double.parseDouble(data[2]), Double.parseDouble(data[1]), Double.parseDouble(data[3])));
             foundCard.setBatteryLvl(Integer.parseInt(data[4]));
+            adapter.notifyDataSetChanged();
+
             this.batteryGW = Integer.parseInt(data[5]);
             String lvl2 = "battery" + this.batteryGW;
             imBatteryGW.setImageResource(getContext().getResources().getIdentifier(lvl2, "drawable", "com.example.huski"));
@@ -455,11 +467,12 @@ public class ListFragment extends Fragment {
                 imBatteryGW.clearAnimation();
             }
             foundCard.setRSSI(Integer.parseInt(data[6]));
+            foundCard.setReceivedAt(Calendar.getInstance().getTime());
         }
     }
 
     public static void sendFromList(String data){
-        if(isConnectedToGW) {
+        if(isConnectedToGW && periph != null) {
             periph.envoyer(data);
         }
     }

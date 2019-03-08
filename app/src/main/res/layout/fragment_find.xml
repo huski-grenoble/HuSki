@@ -41,7 +41,7 @@
             android:textStyle="bold" />
     </RelativeLayout>
 
-    <ImageView
+    <pl.droidsonroids.gif.GifImageView
         android:id="@+id/imageViewCompass"
         android:layout_width="258dp"
         android:layout_height="337dp"
@@ -61,10 +61,20 @@
         android:text="Approximate distance: 0m"
         android:textSize="20dp" />
 
+    <TextView
+        android:id="@+id/tvLastPackage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:text="Last Package received at "
+        android:textColor="#00123e"
+        android:textSize="10dp" />
+
     <ImageView
         android:id="@+id/SignalIntensity"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="100px"
         tools:srcCompat="@drawable/lvl5" />
+
 </LinearLayout>
