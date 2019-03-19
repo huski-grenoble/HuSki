@@ -1,4 +1,4 @@
-# HuSki-hardware
+# HuSki
 Présentation du projet : https://air.imag.fr/index.php/PROJET-1FO5_1819_SkiLocator
 
 Partie hardware : https://github.com/huski-grenoble/HuSki-hardware
