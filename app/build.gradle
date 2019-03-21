@@ -23,8 +23,6 @@ android {
 }
 
 apply plugin: 'com.android.application'
-apply plugin: 'org.sonarqube'
-apply plugin: 'jacoco-android'
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -47,10 +45,4 @@ android.testOptions {
             includeNoLocationClasses=true
         }
     }
-}
-
-jacocoAndroidUnitTestReport  {
-    csv.enabled false
-    html.enabled false
-    xml.enabled true
 }
