@@ -40,7 +40,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
     Activity activity;
     AlertDialog.Builder dialog;
     ImageView imBatterySki;
-    ImageButton localiseBtn,deleteBtn;
+    ImageButton localiseBtn,deleteBtn,renameBtn;
     TextView cardName,chipId;
 
     public CardAdapter(Activity activity, ArrayList<cardStruct> cards){
@@ -62,6 +62,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         chipId = convertView.findViewById(R.id.chipId);
         deleteBtn = convertView.findViewById(R.id.deleteButton);
         localiseBtn =  convertView.findViewById(R.id.localiseButton);
+        renameBtn =  convertView.findViewById(R.id.renameButton);
         String lvl = "battery" + card.getBatteryLvl();
         imBatterySki.setImageResource(getContext().getResources().getIdentifier(lvl, "drawable", "com.example.huski"));
         if(imBatterySki.getDrawable().getConstantState() == getContext().getResources().getDrawable(R.drawable.battery0).getConstantState()){
@@ -71,6 +72,9 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
             animation.setRepeatCount(Animation.INFINITE); //repeating indefinitely
             animation.setRepeatMode(Animation.REVERSE); //animation will start from end point once ended.
             imBatterySki.startAnimation(animation); //to start animation
+        }
+        else{
+            imBatterySki.clearAnimation();
         }
 
         // set cardName
@@ -85,10 +89,47 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 ListFragment.adapter.notifyDataSetInvalidated();
                 try {
                     deleteData(card);
-                    ListFragment.periph.envoyer(card.getChipId() + "3");
+                    if(ListFragment.periph != null) {
+                        ListFragment.periph.envoyer(card.getChipId() + "3");
+                    }
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+            }
+        });
+
+        renameBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final View view = LayoutInflater.from(getContext()).inflate(R.layout.popup, null);
+                final EditText renameInput = (EditText) view.findViewById(R.id.rename);
+                dialog = new AlertDialog.Builder(getContext());
+                dialog.create();
+                dialog.setTitle("Edit the name");
+
+                dialog.setPositiveButton("Rename", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        try {
+                            deleteData(card);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        card.setName(renameInput.getText().toString());
+                        Toast.makeText(activity, "change"+card.getName(), Toast.LENGTH_SHORT).show();
+                        cardName.setText(card.getName());
+                        writeData(card);
+                        ListFragment.adapter.notifyDataSetChanged();
+                    }
+                });
+                dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                dialog.setView(view);
+                dialog.show();
             }
         });
 
@@ -96,6 +137,9 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
             @Override
             public void onClick(View v) {
+                if(ListFragment.periph != null) {
+                    ListFragment.periph.envoyer(card.getChipId() + "1");
+                }
                 ((MainActivity) getContext()).startTransactionFragment(new FindFragment(card));
             }
         });
@@ -138,6 +182,8 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
             }
         });
 
+
+
         // Return the completed view to render on screen
         return convertView;
     }
@@ -154,7 +200,6 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
         // current application.
         File testFile = new File(getContext().getFilesDir(), "CardsSaved.txt");
         if (testFile != null) {
-            StringBuilder stringBuilder = new StringBuilder();
             // Reads the data from the file
             BufferedReader reader = null;
             try {
@@ -162,7 +207,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
                 String line;
 
                 while ((line = reader.readLine()) != null) {
-                    textFromFile = line.toString();
+                    textFromFile = line;
                     String arr[] = textFromFile.split("♥", 2);
                     Log.d("SavedData", arr[1] + " " + card.getChipId().toString());
                     if(arr[1].equals(card.getChipId().toString())){
@@ -203,7 +248,7 @@ public class CardAdapter extends ArrayAdapter<cardStruct> {
 
     public void writeData(cardStruct card){
         try {
-            if(ListFragment.isConnectedToGW) {
+            if(ListFragment.isConnectedToGW && ListFragment.periph != null) {
                 ListFragment.periph.envoyer(card.getChipId() + "2");
             }
             // Creates a file in the primary external storage space of the
